@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 149 218"
+     width="149"
+     height="218"
+     role="img"
+     aria-label="R2DBC symbol">
+  <path fill="#242F68" fill-rule="evenodd" d="
+    M74.5 0
+    C115.65 0 149 27.35 149 61.1
+    V62
+    C149 64.76 146.76 67 144 67
+    H5
+    C2.24 67 0 64.76 0 62
+    V61.1
+    C0 27.35 33.35 0 74.5 0
+    Z
+
+    M91.5 22.5
+    A11 11 0 1 0 91.5 44.5
+    A11 11 0 1 0 91.5 22.5
+    Z
+  "/>
+
+  <rect x="0" y="83" width="149" height="60" rx="5" fill="#242F68"/>
+  <rect x="0" y="158" width="149" height="60" rx="5" fill="#242F68"/>
+</svg>

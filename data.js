@@ -15,43 +15,152 @@ const PROJECTS = {
     summary: "고객사별 Agent와 서비스별 레거시 Gateway에 분산돼 있던 메시지 처리 구조를, 하나의 REST API로 SMS·MMS/LMS·알림톡·RCS를 이용하도록 재설계한 플랫폼 통합 프로젝트입니다.",
 
     asis: {
-      // 이미지 넣기: img: "assets/img/arch-legacy.svg"
-      img: null,
-      placeholder: "레거시 아키텍처 다이어그램<br>assets/img/arch-legacy.svg",
-      caption: "하나의 플랫폼이지만 SMS는 C 기반 분산(Active-Active), MMS/LMS·알림톡은 JDK 1.5 자체 프레임워크 모놀리식, RCS는 JDK 11 Vert.x로 실행 구조가 네 갈래로 나뉘어 있었습니다."
+      img: "assets/img/project/nextgen-messaging-platform/arch-legacy.png",
+      placeholder: "레거시 아키텍처 다이어그램",
+      caption: "해당 서비스는 고객사측 DB에 저장된 row를 polling 방식으로 읽어 서버로 전송한 뒤, 최종적으로 이통망 측에 전달하여 휴대폰 단말기에 문자를 전송하는 서비스입니다." +
+          " 하지만 운영과 유지보수 측면에서 문제들을 마주하게됩니다."
     },
 
     problems: [
-      {
-        h: "변경 증폭",
-        p: "언어·프레임워크·배포·장애 대응이 서비스마다 달라, 공통 기능 하나를 추가해도 서비스별로 따로 분석·개발·검증해야 했습니다."
-      },
-      {
-        h: "운영 결합",
-        p: "고객사 Agent가 특정 서버에 직접 결합돼 있어, 서버 증설·교체가 고객사 방화벽 변경이나 설정 변경·재기동 작업으로 전파됐습니다."
-      },
-      {
-        h: "고객사별 자원 누적",
-        p: "REST API 제공형은 고객사마다 전용 테이블과 Agent JVM이 같은 하드웨어에 쌓이는 구조여서, 고객이 늘면 프로세스가 함께 늘었습니다. 실제 장애로 이어지진 않았지만 확장을 가로막는 구조적 위험이었습니다."
-      },
-      {
-        h: "처리량 변경의 결합",
-        p: "TPS를 조정하려면 인증코드 추가와 Agent 재기동이 필요해, 그 사이 발송이 일시 중단됐습니다."
-      }
+        {
+            h: "기술 스택의 파편화",
+            p: "언어, 프레임워크, 배포, 장애 대응이 서비스마다 달라, 공통 기능 하나를 추가해도 서비스별로 따로 분석, 개발, 검증해야 했으며, 각 서비스에 기능에는 필요한 서버가 제각각이어서 증설 시 IDC에 다수의 서버가 투입되어야했습니다."
+        },
+        {
+            h: "과도한 운영 리소스 비용",
+            p: "회사에서는 고객들에게 보다 쉽고 편리하게 서비스를 제공하기위해 Agent를 제공했지만, 고객사마다 환경이 다르고 그에따라 Agent 커스터마이징이 요구되었으며, 엔지니어가 없는 고객사가 증가함에따라 원격 및 현장지원하는 업무가 많아졌고, 고객사당 설치된 N개의 Agent를 운영인력이 전부 관리하기에는 비효율적이었습니다."
+        },
+        {
+            h:"연동 구조의 문제",
+            p:"고객사 클라이언트가 TCP/IP로 특정 서버에 직접 연결되는 구조였습니다. 서버를 증설하거나 이관하려면 고객사마다 일정을 잡고 클라이언트 설정을 바꿔야 했고, 세션이 모놀리식 서버에 묶여 있어 해당 서버 작업 시 연결되어져 있는 고객사한테 안내 및 조치를 해야하는 상황이었습니다."
+        },
+        {
+            h:"간편한 외부 인터페이스의 부재",
+            p:"기존 Agent가 서버와 소통하는 방식으로 API를 지원했지만, 다소 난이도가 있기에 수요가 없던 상황이었습니다. 하지만 해당 서비스 시장의 경쟁력중 하나인 간편한 외부 인터페이스를 통한 고객의 접근성을 확보하는게 목표였고 이 목표를 기반으로 기존에 있던 레거시의 문제점을 보완한 새로운 플랫폼을 설계하게됩니다."
+        }
     ],
 
     tobe: {
-      img: null,
+      img: "assets/img/project/nextgen-messaging-platform/arch-nextgen.png",
       placeholder: "차세대 아키텍처 다이어그램<br>assets/img/arch-nextgen.svg",
-      caption: "부분 개선 대신 정책과 책임을 중심으로 공통 플랫폼을 재구성해, 고객 수와 처리 서버 수가 서로 독립적으로 확장되도록 했습니다."
+      caption: "기술 스택을 통합하고, 서비스 요청 입구를 하나의 도메인으로 묶어 각각의 엔드포인트로 서비스를 호출하는 마이크로서비스 아키텍처입니다."
     },
 
+    solution_test: {
+      img: "assets/img/project/nextgen-messaging-platform/solution_1_1.png",
+      placeholder: "차세대 아키텍처 다이어그램<br>assets/img/arch-nextgen.svg",
+      caption: "Spring Cloud는 Service Discovery 기능을 제공합니다. MSA의 각 서비스 인스턴스들은 자신의 위치와 정보를 Spring Cloud의 핵심 서버인 Eureka Server 서버에 등록하여, 서비스 이름을 기준으로 관련 인스턴스의 정보들을 얻을 수 있습니다. 이 메커니즘을 기반으로 Spring Cloud API Gateway에서는 Eureka Server로부터 해당 정보를 가져와서 Spring Cloud Loadbalancer를 통해 요청을 분산하여 각각의 서비스에 맞게 분산되고, 이를 통해서 본 플랫폼은 레거시때와는 다르게 클라이언트에 영향없이 무중단으로 Scale-Out이 가능하게됩니다."
+    },
+
+    /* 각 솔루션 = 블록 배열.
+       블록 하나 = { h: 부부제목, img: 이미지, p: 설명, layout: 배치 }
+
+       · 적어 둔 키 순서가 곧 화면 순서다.  { img, p } 면 이미지 → 글
+       · 같은 종류를 여러 번 쓰려면 뒤에 숫자를 붙이거나 배열로 준다
+           { img:"a.png", p:"A", img2:"b.png", p2:"B" }
+           { p:["문단1","문단2"] }
+       · layout — 없으면 세로로 꽉, "split" 반반, "split-sm" 이미지 작게, "split-lg" 이미지 크게
+       · 제목(h)은 layout과 무관하게 항상 한 줄을 다 쓴다 */
     solutions: [
-      ["변경 증폭", "모든 서비스를 Spring 생태계로 통합하고 Eureka·Config Server로 탐색과 설정을 중앙화. 공통 기능을 한 번만 구현합니다."],
-      ["운영 결합", "고객사는 단일 REST API와 Client Key/JWT로 연동. 전용 테이블 없이 처리 서버를 독립적으로 Scale-Out합니다."],
-      ["자원 누적", "첨부 파일을 Storage Server로 분리해 API 서버와 발송 프로세스의 물리적 결합을 해소했습니다."],
-      ["처리량 결합", "API Gateway의 RedisRateLimiter(Token Bucket)로 TPS 정책을 분리. 재기동 없이 즉시 반영됩니다."],
-      ["동시 I/O 처리", "WebFlux Non-Blocking 파이프라인 도입. 장애 대응이 아니라, 다수의 외부 I/O를 적은 스레드로 처리하기 위한 동시성 모델 선택입니다."]
+      {
+        for: "시스템 통합과 MSA 전환",
+        blocks: [
+            {
+                h: "마이크로서비스 아키텍처로 전환",
+                p: "자사의 문자 전송 서비스를 제공하기위해서는 생각보다 많은 절차가 들어갑니다.\n" +
+                   "광고 문자에 대해 수신자를 검증하거나 광고 문자 규격에 맞는지 전문을 검토하는 과정, 고객 데이터와 문자 유형에따라 어떤 외부망 경로로 나가는지 결정짓는 라우팅, KISA에서 제공하는 다양한 형태의 스팸 문구인 비정형 데이터를 수집하여 전문 검증시 수천개의 데이터를 본문에서 검출해야합니다.\n" +
+                   "이 밖에도 비즈니스 문제를 해결하기위한 다양한 절차가 있으며, 이 절차는 서버를 나누는 기준이되어 변경사항이 발생할 때 해당 범위만 수정되면서 서비스에는 지장이 없도록 하기위해 Spring 생태계에서도 강력한 도구인 Spring Cloud를 이용한 MSA를 선택하게됩니다.",
+                img: {
+                    src: "assets/img/project/nextgen-messaging-platform/solution_1_1.png",
+                    layout: null
+                },
+
+                h2: "Spring Cloud 적용기",
+                p2: {
+                    text: "\n\n\n\nSpring Cloud는 Service Discovery 기능을 제공합니다.\n\n" +
+                        "[Step 1]에서 분류된 각 서비스 인스턴스들은 Eureka Client로써 기동할 때 자신의 위치와 정보를 Spring Cloud의 핵심 서버인 Eureka Server에 등록합니다. \n이에따라 Eureka Server는 플랫폼 내부의 서비스 인스턴스들의 정보를 관리할 수 있게됩니다.",
+                    layout: "split-sm"
+                },
+                img2: "assets/img/project/nextgen-messaging-platform/solution_1_2.png",
+
+                img3: {
+                    src: "assets/img/project/nextgen-messaging-platform/solution_1_3.png",
+                    layout: "split-sm"
+                },
+                p3: "\n\n\n이 메커니즘을 기반으로 Spring Cloud API Gateway에서는 Eureka Server로부터 해당 정보를 가져와서 Spring Cloud Loadbalancer를 통해 요청을 분산하여 각각의 서비스에 맞게 분산되고, 이를 통해서 본 플랫폼은 레거시때와는 다르게 클라이언트에 영향없이 무중단으로 Scale-Out이 가능하게됩니다. \n 그 밖에도 Config Server를 통해서 수 많은 서비스 인스턴스들의 공통 설정 파일들을 중앙관리화할 수 있습니다.",
+
+                h4: "Spring Cloud API Gateway",
+                p4: "플랫폼의 가장 중요한 서버중 하나인 API Gateway는 클라이언트의 요청을 처음으로 받아 요청에 맞는 내부 서비스로 전달하는 서버입니다. "
+            },
+            {
+                h: "Spring Cloud 적용기",
+                p: "\n\n\n\nSpring Cloud는 Service Discovery 기능을 제공합니다.\n\n" +
+                    "[Step 1]에서 분류된 각 서비스 인스턴스들은 Eureka Client로써 기동할 때 자신의 위치와 정보를 Spring Cloud의 핵심 서버인 Eureka Server에 등록합니다. \n이에따라 Eureka Server는 플랫폼 내부의 서비스 인스턴스들의 정보를 관리할 수 있게됩니다.",
+                img: {
+                    src: "assets/img/project/nextgen-messaging-platform/solution_1_2.png",
+                    layout: "split-sm"
+                },
+
+
+                p2: "\n\n\n이 메커니즘을 기반으로 Spring Cloud API Gateway에서는 Eureka Server로부터 해당 정보를 가져와서 Spring Cloud Loadbalancer를 통해 요청을 분산하여 각각의 서비스에 맞게 분산되고, 이를 통해서 본 플랫폼은 레거시때와는 다르게 클라이언트에 영향없이 무중단으로 Scale-Out이 가능하게됩니다. \n 그 밖에도 Config Server를 통해서 수 많은 서비스 인스턴스들의 공통 설정 파일들을 중앙관리화할 수 있습니다.",
+                img2: {
+                    src: "assets/img/project/nextgen-messaging-platform/solution_1_3.png",
+                    layout: "split-sm",
+                },
+                h3: "Spring Cloud API Gateway",
+                p3: "플랫폼의 가장 중요한 서버중 하나인 API Gateway는 클라이언트의 요청을 처음으로 받아 요청에 맞는 내부 서비스로 전달하는 서버입니다. "
+            },
+            {
+                h: "Spring Cloud API Gateway",
+                p: "플랫폼의 가장 중요한 서버중 하나인 API Gateway는 클라이언트의 요청을 처음으로 받아 요청에 맞는 내부 서비스로 전달하는 서버입니다. "
+            }
+        ]
+      },
+      {
+        for: "과도한 운영 리소스 비용",
+        blocks: [
+          {
+            h: "API Gateway를 단일 진입점으로",
+            p: "고객사가 서버 주소를 알고 있는 한 결합은 사라지지 않습니다. 진입점을 하나의 도메인으로 고정하고, 프로토콜도 TCP 영속 세션에서 HTTP로 바꿨습니다. 뒤쪽 인스턴스가 늘거나 바뀌어도 고객사는 아무것도 몰라도 됩니다."
+          }
+        ]
+      },
+      {
+        for: "처리량 변경의 결합",
+        blocks: [
+          {
+            h: "TPS 정책을 코드 밖으로",
+            p: "정책은 운영 중에 바뀌는 값인데 배포 주기에 묶여 있었습니다. Gateway 필터와 Redis로 옮겨 재기동 없이 즉시 반영되도록 했습니다."
+          }
+        ]
+      },
+      {
+        for: "운영 부담과 자원 누적",
+        blocks: [
+          {
+            h: "탐색·설정·관측을 중앙으로",
+            p: "인스턴스가 늘어난 만큼 관리 지점도 늘어나면 확장한 의미가 없습니다. 어디에 무엇이 떠 있는지를 사람이 아니라 시스템이 알게 했습니다."
+          }
+        ]
+      },
+      {
+        for: "서비스 간 결합",
+        blocks: [
+          {
+            h: "RabbitMQ 기반 비동기 이벤트 파이프라인",
+            p: "접수와 발송이 같은 호출 흐름에 묶여 있으면 한쪽이 느려질 때 다른 쪽도 함께 멈춥니다. 이벤트로 끊어 각자의 속도로 처리되게 했습니다."
+          }
+        ]
+      },
+      {
+        for: "동기식 I/O의 스레드 점유",
+        blocks: [
+          {
+            h: "Non-Blocking 파이프라인으로 동시성 모델 교체",
+            p: "장애 대응이 아니라 워크로드에 맞춘 선택이었습니다. 한 건 처리에 외부 I/O가 여러 번 필요한 구조라 대기 시간에 스레드를 붙잡아 두지 않는 모델이 맞다고 봤습니다. 다만 느낌으로 정하지 않고, 같은 조건에서 두 모델을 직접 재본 뒤 결정했습니다."
+          }
+        ]
+      }
     ],
 
     impl: [
