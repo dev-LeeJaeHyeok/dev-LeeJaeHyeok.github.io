@@ -1,0 +1,139 @@
+/*!* Result summaries use the existing case-page typography and color tokens. *!*/
+/*.m-sol__body:has(> .m-sol__result) {*/
+/*  min-width: 0;*/
+/*}*/
+
+/*.m-sol__result {*/
+/*  min-width: 0;*/
+/*  margin-top: 32px;*/
+/*  padding-top: 24px;*/
+/*  border-top: 1px solid var(--line-2);*/
+/*  color: var(--text-2);*/
+/*  font-size: 16px;*/
+/*  line-height: 1.75;*/
+/*  letter-spacing: 0;*/
+/*  word-break: keep-all;*/
+/*  overflow-wrap: anywhere;*/
+/*}*/
+
+/*.m-sol__result-title {*/
+/*  margin: 0 0 16px;*/
+/*  color: var(--accent);*/
+/*  font-size: 18px;*/
+/*  font-weight: 700;*/
+/*  line-height: 1.5;*/
+/*  letter-spacing: 0;*/
+/*}*/
+
+/*.m-sol__result-list {*/
+/*  display: grid;*/
+/*  gap: 20px;*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  list-style: none;*/
+/*}*/
+
+/*.m-sol__result-list strong {*/
+/*  display: block;*/
+/*  color: var(--text);*/
+/*  font-weight: 600;*/
+/*}*/
+
+/*.m-sol__result-list p {*/
+/*  margin: 4px 0 0;*/
+/*}*/
+
+/*.m-sol__result-context {*/
+/*  margin: 0 0 20px;*/
+/*  font-size: 14px;*/
+/*  line-height: 1.6;*/
+/*}*/
+
+/*.m-sol__result-value {*/
+/*  font-variant-numeric: tabular-nums;*/
+/*}*/
+
+/*.m-sol__result-decision {*/
+/*  margin: 24px 0 0;*/
+/*}*/
+
+/*.m-sol__result-note {*/
+/*  margin: 8px 0 0;*/
+/*  font-size: 14px;*/
+/*  line-height: 1.6;*/
+/*}*/
+
+/*!* Scope the revised outline to the first solution case. *!*/
+/*.m-sol__item--integrated .m-sol__sub {*/
+/*  margin-top: 0;*/
+/*  margin-bottom: 32px !important;*/
+/*  line-height: 1.5;*/
+/*  letter-spacing: 0;*/
+/*  overflow-wrap: anywhere;*/
+/*}*/
+
+/*.m-sol__item--integrated .m-sol__head {*/
+/*  display: block;*/
+/*}*/
+
+/*.m-sol__item--integrated .m-sol__head::after {*/
+/*  content: none;*/
+/*}*/
+
+/*.m-sol__item--integrated .m-sol__block-title {*/
+/*  font-size: 20px;*/
+/*  line-height: 1.5;*/
+/*  letter-spacing: 0;*/
+/*  overflow-wrap: anywhere;*/
+/*}*/
+
+/*.m-sol__item--integrated .m-sol__block-desc {*/
+/*  font-size: 17px;*/
+/*  letter-spacing: 0;*/
+/*  overflow-wrap: anywhere;*/
+/*}*/
+
+/*.m-sol__item--integrated .m-sol__block + .m-sol__block {*/
+/*  margin-top: 40px;*/
+/*}*/
+
+/*.m-sol__item--integrated .m-sol__figure {*/
+/*  min-width: 0;*/
+/*  margin: 0;*/
+/*}*/
+
+/*.m-sol__item--integrated .m-fig-label {*/
+/*  margin-top: 0;*/
+/*  font-size: 16px;*/
+/*  line-height: 1.5;*/
+/*  letter-spacing: 0;*/
+/*}*/
+
+/*.m-sol__item--integrated .m-sol__figures {*/
+/*  display: grid;*/
+/*  grid-template-columns: repeat(2, minmax(0, 1fr));*/
+/*  gap: 24px;*/
+/*}*/
+
+/*.m-sol__item--integrated #service-unification {*/
+/*  scroll-margin-top: 96px;*/
+/*}*/
+
+/*@media (max-width: 700px) {*/
+/*  .m-sol__item--integrated .m-sol__sub {*/
+/*    font-size: 21px;*/
+/*  }*/
+
+/*  .m-sol__item--integrated .m-sol__block-title {*/
+/*    font-size: 18px;*/
+/*  }*/
+
+/*  .m-sol__item--integrated .m-sol__block-desc {*/
+/*    font-size: 16px;*/
+/*  }*/
+
+/*  .m-sol__item--integrated .m-sol__figures {*/
+/*    grid-template-columns: minmax(0, 1fr);*/
+/*    gap: 28px;*/
+/*  }*/
+/*}*/

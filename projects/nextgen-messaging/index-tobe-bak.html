@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>차세대 통합 메시징 플랫폼 | 이재혁</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    /* Hallmark: Long Document; modern-minimal; studied-DNA (Toss Tech, Kakao Tech, NAVER D2); P4 H4 E4 S5 R5 V4. */
+    :root {
+      color-scheme: light;
+      --color-paper: oklch(100% 0 0);
+      --color-ink: oklch(23.74441% 0.0195228 258.3548);
+      --color-copy: oklch(35.67758% 0.0278338 256.8231);
+      --color-muted: oklch(56.15592% 0.0254252 254.4895);
+      --color-rule: oklch(92.95602% 0.0051928 247.8799);
+      --color-divider: oklch(87.36939% 0.0087901 247.9266);
+      --color-link: oklch(52.68206% 0.1673571 258.0737);
+      --color-backdrop: oklch(15% 0 0 / 0.82);
+      --font-body: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --space-xs: 8px;
+      --space-sm: 16px;
+      --space-md: 24px;
+      --space-lg: 32px;
+      --space-xl: 48px;
+      --space-2xl: 64px;
+      --space-3xl: 80px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; overflow-x: clip; }
+    body {
+      background: var(--color-paper);
+      color: var(--color-copy);
+      font-family: var(--font-body);
+      font-size: 19px;
+      line-height: 1.8;
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, p, figure { margin: 0; }
+    h1, h2, h3 { color: var(--color-ink); font-style: normal; word-break: keep-all; overflow-wrap: anywhere; }
+    p, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--color-link); text-underline-offset: 4px; }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--color-link); outline-offset: 5px; }
+    button { font: inherit; color: inherit; }
+    strong { color: var(--color-ink); font-weight: 700; }
+    .skip-link { position: absolute; left: var(--space-md); top: 0; transform: translateY(-150%); padding: var(--space-xs) var(--space-sm); background: var(--color-paper); z-index: 10; }
+    .skip-link:focus { transform: none; }
+    .site-header { border-bottom: 1px solid var(--color-rule); }
+    .site-header__inner { max-width: 1120px; min-height: 92px; margin-inline: auto; padding: var(--space-md) var(--space-lg); display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+    .site-header__name { color: var(--color-ink); font-size: 16px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .project-heading { position: relative; }
+    .project-back { position: absolute; inset-inline-end: calc(100% + var(--space-md)); top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 10px; width: max-content; min-height: 44px; flex: none; color: var(--color-copy); font-size: 16px; font-weight: 500; line-height: 1; text-decoration: none; white-space: nowrap; }
+    .project-back__circle { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border: 1px solid var(--color-divider); border-radius: 50%; background: var(--color-paper); }
+    .project-back:hover { color: var(--color-ink); }
+    .project-back:active { color: var(--color-copy); }
+    .project-back:active .project-back__circle { background: var(--color-rule); }
+    .project-back svg { width: 18px; height: 18px; }
+    main { max-width: 772px; padding: var(--space-2xl) var(--space-lg) var(--space-3xl); margin-inline: auto; }
+    .project-name { color: var(--color-muted); font-size: 16px; margin-bottom: var(--space-md); }
+    .project-case { margin-top: var(--space-3xl); padding-top: var(--space-xl); border-top: 1px solid var(--color-divider); }
+    .case-heading > h2 { min-width: 0; font-size: 26px; line-height: 1.5; font-weight: 700; }
+    h1 { font-size: 32px; font-weight: 700; line-height: 1.45; text-wrap: balance; min-width: 0; }
+    .project-meta { margin: var(--space-md) 0 0; font-size: 16px; line-height: 1.7; }
+    .project-meta > div { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: var(--space-sm); align-items: baseline; }
+    .project-meta > div + div { margin-top: 10px; }
+    .project-meta dt { color: var(--color-muted); font-weight: 400; }
+    .project-meta dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+    .project-techs { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 0; padding: 0; list-style: none; }
+    .project-techs li { display: inline-flex; align-items: center; gap: 7px; min-height: 28px; white-space: nowrap; }
+    .project-techs img { width: 20px; height: 20px; object-fit: contain; flex: none; }
+    .case-title-tech { white-space: nowrap; }
+    .case-part { margin-top: var(--space-xl); }
+    .case-part > h2 { font-size: 26px; line-height: 1.5; font-weight: 700; margin-bottom: var(--space-md); }
+    .case-block + .case-block { margin-top: var(--space-lg); }
+    .case-block > h3 { font-size: 21px; line-height: 1.6; font-weight: 600; margin-bottom: 12px; }
+    .case-block p + p { margin-top: var(--space-sm); }
+    .case-block ul { margin: 0; padding-left: 22px; }
+    .case-block li + li { margin-top: 12px; }
+    .case-figure { margin-top: var(--space-lg); }
+    .m-fig-label { color: var(--color-ink); font-size: 17px; line-height: 1.6; font-weight: 600; margin-bottom: 12px; }
+    .figure-zoom { display: block; position: relative; width: 100%; padding: 0; border: 1px solid var(--color-rule); background: var(--color-paper); cursor: zoom-in; }
+    .figure-zoom img { display: block; width: 100%; height: auto; }
+    .figure-zoom__icon { position: absolute; bottom: var(--space-xs); right: var(--space-xs); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 4px; background: var(--color-paper); color: var(--color-muted); }
+    .figure-zoom__icon svg { width: 18px; height: 18px; }
+    .figure-zoom:hover .figure-zoom__icon { color: var(--color-ink); }
+    .figure-zoom:active .figure-zoom__icon { color: var(--color-link); }
+    .figure-zoom:disabled, .lightbox__close:disabled { opacity: 0.55; cursor: not-allowed; }
+    .case-part--results { margin-top: var(--space-2xl); padding-top: var(--space-lg); border-top: 1px solid var(--color-divider); }
+    .case-part--results .case-block > h3 { font-size: 22px; font-weight: 700; }
+    .case-part--results .case-block + .case-block { margin-top: var(--space-lg); }
+    .lightbox { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: var(--space-lg); }
+    .lightbox.is-open { display: flex; }
+    .lightbox__backdrop { position: absolute; inset: 0; background: var(--color-backdrop); }
+    .lightbox img { position: relative; display: block; max-width: 100%; max-height: calc(100dvh - 96px); width: auto; height: auto; object-fit: contain; background: var(--color-paper); }
+    .lightbox__close { position: absolute; z-index: 1; top: var(--space-sm); right: var(--space-sm); width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 4px; background: var(--color-paper); cursor: pointer; color: var(--color-ink); }
+    .lightbox__close:hover { color: var(--color-link); }
+    .lightbox__close:active { color: var(--color-copy); }
+    .lightbox__close svg { width: 22px; height: 22px; }
+    @media (max-width: 960px) {
+      .project-heading { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-md); }
+      .project-back { position: static; transform: none; }
+    }
+    @media (max-width: 600px) {
+      body { font-size: 18px; }
+      .site-header__inner { min-height: 68px; padding: 12px 22px; gap: var(--space-sm); }
+      .site-header__name { font-size: 14px; }
+      main { padding: 40px 22px var(--space-2xl); }
+      .project-name { font-size: 15px; margin-bottom: var(--space-sm); }
+      .project-case { margin-top: var(--space-2xl); padding-top: var(--space-lg); }
+      .case-heading > h2 { font-size: 24px; }
+      h1 { font-size: 27px; line-height: 1.5; }
+      .project-meta { font-size: 16px; }
+      .project-meta > div { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; }
+      .project-meta > .project-meta__tech { display: block; margin-top: var(--space-sm); }
+      .project-meta__tech dt { margin-bottom: var(--space-xs); }
+      .project-techs { gap: 8px 16px; }
+      .case-part { margin-top: 36px; }
+      .case-part > h2 { font-size: 24px; margin-bottom: 20px; }
+      .case-block > h3 { font-size: 20px; }
+      .case-block + .case-block { margin-top: 28px; }
+      .case-figure { margin-top: var(--space-md); }
+      .m-fig-label { font-size: 16px; }
+      .case-part--results { margin-top: var(--space-xl); padding-top: 28px; }
+      .case-part--results .case-block > h3 { font-size: 20px; }
+      .lightbox { padding: var(--space-sm); }
+    }
+    @media (max-width: 360px) {
+      h1 { font-size: 25px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__name" href="../../index.html">LEE JAEHYEOK</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <article aria-labelledby="project-title">
+      <header>
+        <div class="project-heading">
+          <a class="project-back" href="./index.html" aria-label="이전 페이지로 돌아가기">
+            <span class="project-back__circle" aria-hidden="true"><i data-lucide="arrow-left"></i></span>
+            <span>이전</span>
+          </a>
+          <h1 id="project-title">차세대 통합 메시징 플랫폼</h1>
+        </div>
+        <dl class="project-meta">
+          <div>
+            <dt>팀 인원</dt>
+            <dd>7명 (BE 5명, FE 2명)</dd>
+          </div>
+          <div>
+            <dt>역할</dt>
+            <dd>개발 리더, PM/PA</dd>
+          </div>
+          <div class="project-meta__tech">
+            <dt>기술</dt>
+            <dd>
+              <ul class="project-techs" aria-label="사용 기술">
+                <li><img src="../../assets/img/logos/java.svg" alt="" aria-hidden="true" width="20" height="20">Java 17</li>
+                <li><img src="../../assets/img/logos/spring.svg" alt="" aria-hidden="true" width="20" height="20">Spring Boot 3.x</li>
+                <li><img src="../../assets/img/logos/webflux.svg" alt="" aria-hidden="true" width="20" height="20">Spring WebFlux</li>
+                <li><img src="../../assets/img/logos/cloud.svg" alt="" aria-hidden="true" width="20" height="20">Spring Cloud</li>
+                <li><img src="../../assets/img/logos/r2dbc.svg" alt="" aria-hidden="true" width="20" height="20">R2DBC</li>
+                <li><img src="../../assets/img/logos/mariadb.svg" alt="" aria-hidden="true" width="20" height="20">MariaDB</li>
+                <li><img src="../../assets/img/logos/redis.svg" alt="" aria-hidden="true" width="20" height="20">Redis</li>
+                <li><img src="../../assets/img/logos/rabbitmq.svg" alt="" aria-hidden="true" width="20" height="20">RabbitMQ</li>
+                <li><img src="../../assets/img/logos/k6.svg" alt="" aria-hidden="true" width="20" height="20">k6</li>
+              </ul>
+            </dd>
+          </div>
+        </dl>
+      </header>
+
+      <section class="case-part" aria-labelledby="overview-title">
+        <h2 id="overview-title">개요</h2>
+        <p class="project-summary">약 300개 고객사가 이용하는 B2B 플랫폼으로, 월평균 9천만 건의 SMS, LMS, MMS, RCS, 알림톡을 처리하는 서비스입니다. 20년간 운영되어 온 레거시 시스템을 전면 개편하는 프로젝트로, C, Java, Python으로 나뉘어 운영되던 시스템을 Java와 Spring Cloud 기반의 MSA 재설계와 백엔드 서버 개발과 CI/CD 파이프라인을 구축 했습니다.</p>
+        <figure class="case-figure">
+          <figcaption class="m-fig-label">차세대 아키텍처</figcaption>
+          <button class="figure-zoom" type="button" data-zoom="../../assets/img/project/nextgen-messaging-platform/arch-nextgen.png" aria-label="기존 레거시 아키텍처 크게 보기" title="구성도 크게 보기">
+            <img src="../../assets/img/project/nextgen-messaging-platform/arch-nextgen.png" alt="문자 유형마다 서로 다른 서버와 개발 환경을 사용하던 레거시 문자 시스템 구성도" width="2000" height="2094" loading="lazy" decoding="async">
+            <span class="figure-zoom__icon" aria-hidden="true"><i data-lucide="expand"></i></span>
+          </button>
+        </figure>
+      </section>
+
+      <section class="project-case" aria-labelledby="integration-title">
+        <div class="case-heading">
+          <h2 id="integration-title">Spring Cloud 기반의 시스템 통합으로 개발 및 유지보수 비용 절감</h2>
+        </div>
+        <section class="case-part case-block" aria-labelledby="integration-problem-title">
+          <h3 id="integration-problem-title">문제</h3>
+          <p>20년간 운영되어 온 기존 플랫폼은 SMS, LMS/MMS, RCS, 알림톡 서비스마다 개발 언어와 환경이 달라, 공통 기능도 각 환경에 맞춰 따로 개발해야 했고, 환경마다 개별적으로 운영해야 됐기 때문에 유지보수와 운영에 많은 비용이 발생했습니다.</p>
+        </section>
+        <section class="case-part case-block" aria-labelledby="integration-solution-title">
+          <h3 id="integration-solution-title">해결</h3>
+          <p>개발과 운영 비용 문제를 해결하기 위해서 레거시 시스템을 하나의 플랫폼으로 통합했습니다.</p>
+          <p>먼저 각 서비스의 기획 문서와 코드를 분석해 공통 기능과 서비스별 고유 기능을 분류하고, 필요한 서비스만 독립적으로 개발하고 배포할 수 있도록 기능적 응집도를 고려한 MSA 서버 아키텍처를 설계했습니다.</p>
+        </section>
+      </section>
+
+    </article>
+  </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="이미지 크게 보기">
+    <div class="lightbox__backdrop" data-lb-close></div>
+    <button class="lightbox__close" type="button" data-lb-close aria-label="닫기" title="닫기"><i data-lucide="x" aria-hidden="true"></i></button>
+    <img id="lightboxImg" alt="">
+  </div>
+  <script src="../../script.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

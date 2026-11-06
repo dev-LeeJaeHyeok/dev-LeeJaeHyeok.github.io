@@ -1,0 +1,26 @@
+{
+  "protected": {
+    "projects/nextgen-messaging/index.html": "c133db3ab3fbc1fa07e5bc8b0373abd36322205a496740fa41f1a9865d22b849",
+    "projects/nextgen-messaging/index-test.html": "f58d0375f661fb9b7d18eb88169384f85ddc4776af470536a5bff72dd09233f5",
+    "style.css": "70a5086eef8d2ee5c78b54922754ec9a5007bf9015502a762e579b773ad2724d",
+    "script.js": "93ea8a28f47d5ae5451f3fa6904a88c94889dd6d0e60dd09beacc2838180d130"
+  },
+  "projectImages": [
+    "../../assets/img/project/nextgen-messaging-platform/arch-legacy.png",
+    "../../assets/img/project/nextgen-messaging-platform/solution_1_1.png",
+    "../../assets/img/project/nextgen-messaging-platform/arch-nextgen.png",
+    "../../assets/img/project/nextgen-messaging-platform/bench/raw-vu-csv.png",
+    "../../assets/img/project/nextgen-messaging-platform/bench/bench_tps.png",
+    "../../assets/img/project/nextgen-messaging-platform/bench/bench_p95.png",
+    "../../assets/img/project/nextgen-messaging-platform/bench/jmc-mvc-threads.png",
+    "../../assets/img/project/nextgen-messaging-platform/bench/jmc-webflux-threads.png",
+    "../../assets/img/project/nextgen-messaging-platform/bench/bench_thread.png",
+    "../../assets/img/project/nextgen-messaging-platform/mvc_threads.png",
+    "../../assets/img/project/nextgen-messaging-platform/webflux_thread.png",
+    "../../assets/img/project/nextgen-messaging-platform/mvc_cpu.png",
+    "../../assets/img/project/nextgen-messaging-platform/webflux_cpu.png",
+    "../../assets/img/project/nextgen-messaging-platform/mvc_heap.png",
+    "../../assets/img/project/nextgen-messaging-platform/webflux_heap.png",
+    "../../assets/img/project/nextgen-messaging-platform/CI_CD.png"
+  ]
+}

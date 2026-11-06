@@ -183,7 +183,7 @@
   function buildProject(p) {
     let html = `
       <div class="m-head">
-        <p class="m-eyebrow">${esc(p.eyebrow)}</p>
+<!--        <p class="m-eyebrow">${esc(p.eyebrow)}</p>-->
         <h2 class="m-title">${esc(p.title)}</h2>
         <p class="m-summary">${rich(p.summary)}</p>
         <dl class="m-meta">
@@ -342,7 +342,7 @@
     });
   }
 
-  document.querySelectorAll('[data-modal]').forEach(el => {
+  if (modal) document.querySelectorAll('[data-modal]').forEach(el => {
     const open = () => {
       const key = el.dataset.modal;
       // index.html에 템플릿이 있으면 그쪽이 우선. 없으면 data.js로 그린다
@@ -357,7 +357,7 @@
     });
   });
 
-  document.querySelectorAll('[data-skill]').forEach(el => {
+  if (modal) document.querySelectorAll('[data-skill]').forEach(el => {
     // 시각적 신호(+ 마커)는 aria-hidden이므로 접근성 이름으로 용도를 밝힌다
     const label = el.querySelector('.chip__name');
     if (label) el.setAttribute('aria-label', label.textContent.trim() + ' 상세 경험 보기');
@@ -368,7 +368,7 @@
     });
   });
 
-  modal.querySelectorAll('[data-close]').forEach(el => {
+  if (modal) modal.querySelectorAll('[data-close]').forEach(el => {
     el.addEventListener('click', closeModal);
   });
 
@@ -395,11 +395,15 @@
     lbLastFocused = null;
   }
 
-  // 모달 내용은 스크립트가 매번 새로 그리므로 위임으로 받는다
-  modalContent.addEventListener('click', e => {
+  // 모달 내용은 매번 새로 그려지고, 케이스 페이지는 처음부터 문서에 있다.
+  // 양쪽 다 문서 단위 위임으로 받는다.
+  document.addEventListener('click', e => {
     const zoom = e.target.closest('[data-zoom]');
     if (zoom) openLightbox(zoom.dataset.zoom, zoom.getAttribute('aria-label'));
   });
+
+  // 케이스 페이지의 정적 본문에도 확대 버튼을 입힌다
+  upgradeZoom(document);
 
   lightbox.querySelectorAll('[data-lb-close]').forEach(el => {
     el.addEventListener('click', closeLightbox);
@@ -418,11 +422,11 @@
     if (e.key !== 'Escape') return;
     // 위에 떠 있는 것부터 닫는다
     if (lightbox.classList.contains('is-open')) { closeLightbox(); return; }
-    if (modal.classList.contains('is-open')) closeModal();
+    if (modal && modal.classList.contains('is-open')) closeModal();
   });
 
   /* 모달 내부 포커스 유지 */
-  modal.addEventListener('keydown', e => {
+  if (modal) modal.addEventListener('keydown', e => {
     if (e.key !== 'Tab') return;
     const focusables = modal.querySelectorAll(
       'button, a[href], input, [tabindex]:not([tabindex="-1"])'

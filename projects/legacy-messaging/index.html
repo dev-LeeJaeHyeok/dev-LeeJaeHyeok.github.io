@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>레거시 문자 플랫폼 개발·운영 — 이재혁</title>
+<meta name="description" content="온프레미스 문자 플랫폼을 운영하면서 반복 수작업을 도구로 대체하고, C 기반 수신 서버를 Java로 옮긴 과정.">
+<meta property="og:title" content="레거시 문자 플랫폼 개발·운영 — 이재혁">
+<meta property="og:description" content="온프레미스 문자 플랫폼을 운영하면서 반복 수작업을 도구로 대체하고, C 기반 수신 서버를 Java로 옮긴 과정.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body class="is-case">
+
+<a href="#main" class="skip-link">본문 바로가기</a>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="../../index.html" class="nav__logo">LEE JAEHYEOK</a>
+    <nav class="nav__menu" aria-label="주요 섹션">
+      <a href="../../index.html#work">WORK</a>
+      <a href="../../index.html#skills">SKILLS</a>
+      <a href="../../index.html#experience">EXPERIENCE</a>
+      <a href="../../assets/docs/resume.pdf" target="_blank" rel="noopener" class="nav__resume">RESUME</a>
+    </nav>
+    <button class="nav__toggle" id="navToggle" aria-label="메뉴 열기" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="case">
+  <div class="case__wrap">
+    <a class="case__back case__back--top" href="../../index.html#work"><span aria-hidden="true">←</span> Work experience</a>
+
+  <div class="m-head">
+    <h1 class="m-title">레거시 문자 플랫폼 개발·운영</h1>
+    <dl class="m-meta">
+      <dt>기간</dt><dd>2021.10 — 2023.09</dd>
+      <dt>역할</dt><dd>유지보수 · 서버 리모델링 · 백오피스 도구 개발</dd>
+      <dt>기술</dt><dd>Java 8/11 · Spring Boot 2.x · MySQL · Oracle · Thymeleaf · Apache POI · PDFBox · SMPP</dd>
+    </dl>
+  </div>
+
+  <section class="m-sec">
+    <p class="m-sec__label-mt"><img class="ico ico--lg" src="../../assets/img/icon/overview_icon.png" alt="" aria-hidden="true">개요</p>
+    <p class="m-summary">온프레미스 환경의 대량 문자 발송 사이트와 발송 Agent·Gateway를 운영하면서, 반복되는 수작업을 도구로 대체하고 레거시 서버를 Java 기반으로 옮긴 과정입니다. 입사 후 첫 2년 동안 이 플랫폼을 맡았고, 여기서 파악한 문제들이 이후 차세대 플랫폼 설계의 출발점이 됐습니다.</p>
+
+    <p class="m-sec__label">AS-IS · 운영 환경</p>
+    <div class="m-fig">
+      <p class="m-fig__ph">[ 필요한 이미지 ] 레거시 플랫폼 운영 범위<br><br>발송 사이트 · Agent · Gateway · 015 수신 서버의 관계<br>어디를 담당했는지 표시하면 좋습니다<br><br>저장 위치: assets/img/project/legacy-messaging/arch.png</p>
+    </div>
+    <p class="m-cap">SMS·MMS 발송 사이트와 고객사에 설치되는 발송 Agent, 그리고 이통망과 연결되는 Gateway가 하나의 온프레미스 환경에서 돌아가고 있었습니다. 운영을 맡으면서 장애 대응과 기능 추가를 반복하다 보니, 코드가 아니라 <strong>업무 흐름 자체에 손댈 곳</strong>이 보이기 시작했습니다.</p>
+  </section>
+
+  <section class="m-sec">
+    <p class="m-sec__label"><img class="ico ico--lg" src="../../assets/img/icon/question_mark.png" alt="" aria-hidden="true" loading="lazy" decoding="async">마주했던 문제</p>
+    <div class="m-list">
+      <div>
+        <h4>매달 100건 넘는 PDF를 사람이 열어 확인</h4>
+        <p>운영팀이 매달 100~200개의 PDF 문서를 하나씩 열어 필요한 데이터를 눈으로 확인하고 있었습니다. 단순 반복이라 실수가 나기 쉽고, 실수가 나면 어디서 틀렸는지 되짚기도 어려웠습니다.</p>
+      </div>
+      <div>
+        <h4>같은 형식의 Excel을 매일 손으로 작성</h4>
+        <p>유관 부서들이 업무 보고용 Excel을 매일 직접 만들고 있었습니다. 데이터는 시스템 안에 있는데 형식만 사람이 맞추는 상황이라, 사람이 하는 일은 옮겨 적는 것뿐이었습니다.</p>
+      </div>
+      <div>
+        <h4>C로 작성된 수신 서버</h4>
+        <p>010에서 015 번호로 들어오는 문자를 받는 서버가 C로 작성돼 있었습니다. 기능은 동작했지만 사내 다른 서비스와 언어가 달라 유지보수 인력이 한정됐고, 기능을 추가할 때마다 분석에 드는 시간이 실제 개발 시간보다 길었습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="m-sec">
+    <p class="m-sec__label"><img class="ico ico--lg" src="../../assets/img/icon/solution_mark.png" alt="" aria-hidden="true" loading="lazy" decoding="async">해결 과정</p>
+    <div class="m-sol">
+
+      <article class="m-sol__item">
+        <p class="m-sol__num" aria-hidden="true">01</p>
+        <div class="m-sol__body">
+          <p class="m-sol__sub">반복 수작업을 도구로 대체</p>
+          <p class="m-summary">운영 업무를 하다 보면 사람이 해야 할 이유가 없는 일이 눈에 띕니다. 요청받은 일은 아니었지만, 같은 작업을 몇 달 반복해서 지켜보니 도구로 만드는 편이 빠르겠다는 판단이 섰습니다.</p>
+
+          <div class="m-sol__block">
+            <div class="m-sol__head">
+              <span class="m-sol__step">STEP 01</span>
+              <h4 class="m-sol__block-title">PDF 데이터 추출기</h4>
+            </div>
+            <p class="m-sol__block-desc">Apache PDFBox로 문서에서 필요한 데이터를 뽑아내는 추출기를 만들었습니다. 문제는 PDF가 표처럼 보여도 내부적으로는 좌표가 있는 텍스트 조각의 나열이라는 점이었습니다. 그래서 텍스트만 긁어내면 순서가 뒤섞입니다.
+
+문서 양식이 고정돼 있다는 점을 이용해, 데이터가 놓이는 위치를 기준으로 영역을 잡고 그 영역 안의 텍스트만 읽도록 했습니다. 양식이 바뀌면 영역 정의만 고치면 되도록 분리해 뒀습니다.</p>
+            <div class="m-fig">
+              <p class="m-fig__ph">[ 필요한 이미지 ] PDF 추출기 화면 또는 처리 흐름<br><br>추출 대상 영역과 결과 데이터가 함께 보이면 좋습니다<br>실제 문서라면 값은 가려도 됩니다<br><br>저장 위치: assets/img/project/legacy-messaging/pdf-extractor.png</p>
+            </div>
+          </div>
+
+          <div class="m-sol__block">
+            <div class="m-sol__head">
+              <span class="m-sol__step">STEP 02</span>
+              <h4 class="m-sol__block-title">Excel 문서 빌더</h4>
+            </div>
+            <p class="m-sol__block-desc">보고서를 만들어 주는 도구는 만들기 쉽지만, 형식이 바뀔 때마다 개발자가 손대야 하면 결국 병목이 개발자로 옮겨올 뿐입니다.
+
+그래서 Apache POI 기반으로 빌더를 만들되, <strong>양식 자체를 사용자가 등록</strong>하도록 했습니다. Excel 파일을 올리고 값이 들어갈 자리에 템플릿 문법을 적어 두면, 빌더가 그 자리에 데이터를 채웁니다. 등록과 미리보기는 Thymeleaf로 화면을 만들어 실무자가 직접 쓰도록 했습니다. 형식이 바뀌어도 개발 요청 없이 양식만 다시 올리면 됩니다.</p>
+            <div class="m-fig">
+              <p class="m-fig__ph">[ 필요한 이미지 ] Excel 빌더 화면<br><br>양식 등록 화면과 템플릿 문법이 적힌 Excel, 생성된 결과물<br>세 장이면 좋고 한 장으로 합쳐도 됩니다<br><br>저장 위치: assets/img/project/legacy-messaging/excel-builder.png</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="m-sol__item">
+        <p class="m-sol__num" aria-hidden="true">02</p>
+        <div class="m-sol__body">
+          <p class="m-sol__sub">C 기반 015 수신 서버를 Java로 리모델링</p>
+          <div class="m-sol__block">
+            <div class="m-sol__head">
+              <span class="m-sol__step">STEP 01</span>
+              <h4 class="m-sol__block-title">먼저 읽고 정리하기</h4>
+            </div>
+            <p class="m-sol__block-desc">문서가 남아 있지 않은 서버였기 때문에 코드를 읽어 동작을 정리하는 것부터 시작했습니다. 어떤 전문을 받아 어떤 순서로 처리하고, 어떤 조건에서 응답을 돌려주는지를 흐름으로 먼저 그렸습니다.
+
+이 단계에서 시간을 쓴 이유는, 옮기는 작업에서 가장 위험한 것이 <strong>원본에 있던 예외 처리를 빠뜨리는 것</strong>이기 때문입니다. 정상 흐름은 테스트하면 드러나지만, 예외 흐름은 원본을 읽지 않으면 존재 자체를 모릅니다.</p>
+          </div>
+
+          <div class="m-sol__block">
+            <div class="m-sol__head">
+              <span class="m-sol__step">STEP 02</span>
+              <h4 class="m-sol__block-title">Java 11로 다시 구현</h4>
+            </div>
+            <p class="m-sol__block-desc">정리한 흐름을 기준으로 Java 11 버전을 만들었습니다. 기능을 새로 추가하지 않고 동작을 그대로 옮기는 데 집중했습니다. 옮기면서 기능까지 바꾸면, 문제가 생겼을 때 원인이 이관 때문인지 새 기능 때문인지 구분할 수 없기 때문입니다.
+
+언어가 사내 표준과 같아지면서 이후 기능 추가나 장애 대응을 다른 인원도 맡을 수 있게 됐습니다.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="m-sol__item">
+        <p class="m-sol__num" aria-hidden="true">03</p>
+        <div class="m-sol__body">
+          <p class="m-sol__sub">국제 MMS 발송을 위한 SMPP 클라이언트</p>
+          <div class="m-sol__block">
+            <div class="m-sol__head">
+              <h4 class="m-sol__block-title">해외 발송사와의 연동</h4>
+            </div>
+            <p class="m-sol__block-desc">국제 MMS 발송이 필요해지면서 해외 발송사 서버와 통신하는 모듈을 개발했습니다. 국내 연동은 사내 규격을 쓰지만 해외는 SMPP라는 표준 프로토콜을 씁니다.
+
+바인드로 세션을 맺고 PDU 단위로 주고받는 구조라, 앞서 다룬 전문 기반 통신과 개념은 비슷하지만 규격이 공개돼 있다는 점이 달랐습니다. 표준 문서를 기준으로 구현하고 발송사 측 테스트 환경으로 검증했습니다.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="m-sol__item">
+        <p class="m-sol__num" aria-hidden="true">04</p>
+        <div class="m-sol__body">
+          <p class="m-sol__sub">Agent 플랫폼 이관 지원</p>
+          <div class="m-sol__block">
+            <div class="m-sol__head">
+              <h4 class="m-sol__block-title">Oracle에서 MySQL로</h4>
+            </div>
+            <p class="m-sol__block-desc">LG CNS 전용 Agent가 Oracle을 바라보고 있었는데 이를 MySQL로 옮기는 작업이었습니다. DB I/O 부분을 수정하고 고객사 환경에 설치·테스트하는 과정까지 담당했습니다.
+
+이 작업에서 <strong>고객사마다 Agent가 다르다</strong>는 구조적 문제를 직접 겪었습니다. 한 고객사의 DB를 바꾸는 일이 그 고객사 전용 Agent를 따로 손봐야 하는 일이 되고, 설치와 검증도 현장에서 따로 진행해야 했습니다. 이 경험이 이후 차세대 플랫폼에서 Agent 설치 없이 REST API로 연동하도록 설계한 배경이 됐습니다.</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="m-sec">
+    <p class="m-sec__label">DIRECT IMPLEMENTATION · 직접 구현</p>
+    <ul class="m-impl"><li>PDF 데이터 추출기</li><li>Excel 문서 빌더</li><li>015 수신 서버 (Java 리모델링)</li><li>SMPP 클라이언트 모듈</li><li>문자 발송 Agent 유지보수</li></ul>
+  </section>
+
+  <section class="m-sec">
+    <p class="m-sec__label is-accent">VALIDATION · 검증</p>
+    <div class="m-tests">
+      <div>
+        <p class="m-test__name">업무 프로세스 개선 결과</p>
+        <p class="m-test__cond">자체 제작 도구 도입 전후 비교 — 정량 측정이 아니라 담당 업무 기준의 변화입니다</p>
+        <div class="m-test__nums">
+          <div><p class="m-test__num">100+</p><p class="m-test__cap">월 PDF<br>수작업 자동화</p></div>
+          <div><p class="m-test__num">2종</p><p class="m-test__cap">사내 도구<br>자체 제작</p></div>
+          <div><p class="m-test__num">C→Java</p><p class="m-test__cap">수신 서버<br>리모델링</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="m-sec">
+    <p class="m-sec__label">RESULT · 결과</p>
+    <p class="m-cap">운영팀과 유관 부서의 반복 수작업을 도구로 대체했고, 레거시 C 서버를 Java 기반으로 옮겨 유지보수 인력의 폭을 넓혔습니다. 무엇보다 이 2년 동안 겪은 문제들이 다음 프로젝트의 설계 근거가 됐습니다. Agent 커스터마이징의 부담, 서비스마다 다른 기술 스택, 고객사별로 따로 진행해야 하는 설치와 검증 — 차세대 플랫폼에서 통합하려 했던 것들은 전부 여기서 직접 겪은 것들입니다.</p>
+  </section>
+
+    <a class="case__back" href="../../index.html#work"><span aria-hidden="true">←</span> Work experience</a>
+  </div>
+</main>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="이미지 크게 보기">
+  <div class="lightbox__backdrop" data-lb-close></div>
+  <button class="lightbox__close" data-lb-close aria-label="닫기">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M6 6L18 18M18 6L6 18" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script src="../../script.js"></script>
+</body>
+</html>

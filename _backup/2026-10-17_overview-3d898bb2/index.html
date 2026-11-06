@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>차세대 통합 메시징 플랫폼 — 이재혁</title>
+<meta name="description" content="Polyglot 문자 서비스를 Spring 기반 MSA로 통합하고, MVC와 WebFlux를 직접 벤치마크해 동시성 모델을 선택한 과정.">
+<meta property="og:title" content="차세대 통합 메시징 플랫폼 — 이재혁">
+<meta property="og:description" content="Polyglot 문자 서비스를 Spring 기반 MSA로 통합하고, MVC와 WebFlux를 직접 벤치마크해 동시성 모델을 선택한 과정.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../style.css">
+<!--<link rel="stylesheet" href="./results.css">-->
+<style>
+body.is-case{--ng-type-scale:1.2;font-size:calc(18px * var(--ng-type-scale))}
+.is-case .skip-link{font-size:calc(14px * var(--ng-type-scale))}
+.is-case .nav__logo{font-size:calc(17px * var(--ng-type-scale));letter-spacing:0}
+.is-case .nav__menu a{font-size:calc(14px * var(--ng-type-scale));letter-spacing:0}
+.is-case .case__back{font-size:calc(12.5px * var(--ng-type-scale));letter-spacing:0}
+.is-case .m-title{font-size:calc(40.5px * var(--ng-type-scale));letter-spacing:0;word-break:keep-all;overflow-wrap:anywhere}
+.is-case .m-meta{font-size:calc(16px * var(--ng-type-scale))}
+.is-case .chips--static .chip{font-size:calc(14px * var(--ng-type-scale))}
+.is-case .m-summary,.is-case .m-cap,.is-case .m-list p{font-size:calc(16.5px * var(--ng-type-scale));word-break:keep-all;overflow-wrap:anywhere}
+.is-case .m-sec__label,.is-case .m-sec__label-mt{font-size:calc(32px * var(--ng-type-scale));letter-spacing:0;display:flex;align-items:flex-start}
+.is-case .m-sec__label .ico,.is-case .m-sec__label-mt .ico{flex-shrink:0}
+.is-case .m-list h4{font-size:calc(19.5px * var(--ng-type-scale));letter-spacing:0;word-break:keep-all;overflow-wrap:anywhere}
+.is-case .m-fig-label{font-size:calc(20px * var(--ng-type-scale));letter-spacing:0}
+.is-case .m-table{font-size:calc(16px * var(--ng-type-scale))}
+.is-case .m-table thead th,.is-case .m-cmp-cols span{font-size:calc(12.5px * var(--ng-type-scale));letter-spacing:0}
+@media(max-width:900px){.is-case .m-title{font-size:calc(34.56px * var(--ng-type-scale))}}
+@media(max-width:655px){.is-case .m-title{font-size:calc(29.5px * var(--ng-type-scale))}}
+@media(max-width:640px){.is-case .nav__menu a{font-size:calc(12.5px * var(--ng-type-scale))}}
+
+.ng-points{list-style:disc;padding-left:1.25em;white-space:normal}
+.ng-points > li{color:var(--text);font-weight:700}
+.ng-points > li + li{margin-top:14px}
+.ng-points li::marker{color:var(--text-3)}
+.ng-points ul{list-style:circle;padding-left:1.2em;margin-top:8px}
+.ng-points ul li{color:var(--text-2);font-weight:400}
+.ng-links{list-style:none;padding-left:0;margin-top:8px;display:flex;flex-wrap:wrap;gap:6px 16px;font-size:calc(16.5px * var(--ng-type-scale))}
+.ng-links li{margin-top:0}
+.ng-links li::marker{content:none}
+.ng-architecture{margin-inline:0}
+
+/* Keep layout and type changes local to this project page. */
+.ng-solutions .m-sol__item{display:block}
+.ng-solutions .ng-solution-heading{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:14px;align-items:first baseline;margin-bottom:20px}
+.ng-solutions .m-sol__body{min-width:0}
+.ng-solutions .m-sol__body > .ng-solution-sections:first-child{margin-top:0}
+.ng-solutions .m-sol__num{font-size:calc(22px * var(--ng-type-scale));font-weight:800;line-height:1.5;letter-spacing:-.5px;color:var(--accent);margin:0!important}
+.ng-solutions .m-sol__sub{font-size:calc(27px * var(--ng-type-scale));font-weight:700;line-height:1.5;letter-spacing:0;color:var(--text);margin-bottom:0!important;word-break:keep-all;overflow-wrap:anywhere}
+.ng-solutions .ng-solution-sections{margin:20px 0 0 4px;padding-left:24px;border-left:2px solid var(--line-2);min-width:0}
+.ng-solutions .ng-solution-sections > .m-sol__block{margin-top:0;border-top:1px solid var(--line-2)}
+.ng-solutions .ng-solution-sections > .m-sol__block:first-child{border-top:0}
+.ng-solutions .ng-disclosure > summary{display:list-item;position:relative;min-height:68px;padding:20px 32px 20px 0;cursor:pointer}
+.ng-solutions .ng-disclosure > summary::marker{color:var(--text-3)}
+.ng-solutions .ng-disclosure > summary:hover{color:var(--accent);background:var(--surface)}
+.ng-solutions .ng-disclosure > summary .m-sol__block-title{font-size:calc(23px * var(--ng-type-scale));font-weight:600;line-height:1.5;letter-spacing:0;word-break:keep-all;overflow-wrap:anywhere}
+.ng-solutions .ng-disclosure__chevron{display:none;position:absolute;right:0;top:30.7px;width:20px;height:20px;color:var(--text-3);transition:transform .16s cubic-bezier(.2,.65,.3,1)}
+.ng-solutions.ng-icons-ready .ng-disclosure > summary{display:block;list-style:none}
+.ng-solutions.ng-icons-ready .ng-disclosure > summary::-webkit-details-marker{display:none}
+.ng-solutions.ng-icons-ready .ng-disclosure__chevron{display:block}
+.ng-solutions .ng-disclosure[open] > summary .ng-disclosure__chevron{transform:rotate(180deg)}
+.ng-solutions .ng-disclosure[data-closing] > summary .ng-disclosure__chevron{transform:none}
+.ng-solutions[data-animating]{overflow-anchor:none}
+.ng-solutions .ng-disclosure[data-animating]{overflow:hidden}
+.ng-solutions .ng-disclosure > .ng-disclosure__content{margin-top:0!important;background:var(--surface);border-radius:2px;padding:22px 22px 26px;min-width:0}
+.ng-solutions .ng-disclosure__content > * + *{margin-top:18px!important}
+.ng-solutions .m-sol__block-desc,.ng-solutions .m-cap,.ng-solutions .m-list p{font-size:calc(16.5px * var(--ng-type-scale));line-height:1.85;letter-spacing:0;word-break:keep-all;overflow-wrap:anywhere}
+.ng-solutions .m-cap{font-size:calc(15px * var(--ng-type-scale));line-height:1.6;color:var(--text-3)}
+.ng-solutions .m-list--dev h4{font-size:calc(17.5px * var(--ng-type-scale));letter-spacing:0;word-break:keep-all;overflow-wrap:anywhere}
+.ng-dev-list{list-style:disc;padding-left:1.1em;white-space:normal;color:var(--text-2)}
+.ng-dev-list li + li{margin-top:3px}
+.ng-dev-list li::marker{color:var(--text-3)}
+.ng-solutions .ng-dev-list{font-size:calc(16px * var(--ng-type-scale));line-height:1.6;letter-spacing:0;word-break:keep-all;overflow-wrap:anywhere}
+.ng-dev-label{color:var(--text);font-weight:700;font-size:calc(16px * var(--ng-type-scale));line-height:1.6}
+.ng-sub{color:var(--text);font-size:calc(21px * var(--ng-type-scale));font-weight:700;letter-spacing:0;line-height:1.5;margin:0;word-break:keep-all}
+.ng-solutions .ng-disclosure__content > .ng-sub{margin-top:34px!important}
+.ng-solutions .ng-disclosure__content > .ng-sub:first-child{margin-top:0!important}
+.ng-solutions .ng-disclosure__content > .ng-sub + *{margin-top:16px!important}
+.m-list--dev > div > p{line-height:1.6}
+.m-list--dev > div > * + *{margin-top:4px}
+.m-list--dev > div > ul + .ng-dev-label{margin-top:18px}
+.m-list--dev > div > .ng-dev-label + ul{margin-top:6px}
+.m-list--dev > div > p + ul{margin-top:6px}
+.m-list--dev > div > h4 + p{margin-top:2px}
+.m-list--dev > div > .ng-links{margin-top:14px;color:var(--text-2)}
+.m-list--dev > div > .ng-links + .ng-links{margin-top:8px}
+.m-list--dev > div > .ng-links strong{color:var(--text);font-weight:600}
+.ng-solutions .m-list--dev .ng-links{font-size:calc(15px * var(--ng-type-scale));line-height:1.6}
+.ng-points .ng-links{list-style:none;padding-left:0;margin-top:10px}
+.ng-solutions .ng-points .ng-tps-flow{font-size:inherit}
+#reactive-result .ng-sub{font-size:calc(16.5px * var(--ng-type-scale))}
+@media(max-width:600px){#reactive-result .ng-sub{font-size:calc(15.5px * var(--ng-type-scale))}}
+@media(max-width:600px){.ng-solutions .ng-dev-list,.ng-dev-label{font-size:calc(15px * var(--ng-type-scale))}.ng-sub{font-size:calc(19.5px * var(--ng-type-scale))}.ng-solutions .ng-disclosure > .ng-disclosure__content{padding:18px 16px 22px}}
+.ng-solutions .m-fig-label{font-size:calc(15.5px * var(--ng-type-scale));line-height:1.6;letter-spacing:0}
+.ng-solutions .ng-links{font-size:calc(14px * var(--ng-type-scale))}
+.ng-solutions .m-sol__row--split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.ng-solutions .ng-cicd-figure{max-width:560px;margin-inline:0}
+.ng-solutions .ng-cicd-steps{list-style:decimal}
+.ng-solutions .ng-cicd-steps li + li{margin-top:8px}
+.ng-solutions .ng-branch-list code{margin-right:7px}
+/* Hallmark pre-emit critique: P4 H4 E4 S5 R5 V4. Reuse the project design. */
+.ng-cicd .m-sol__block-desc{white-space:normal;line-height:1.75}
+.ng-cicd .ng-sub{font-size:calc(18px * var(--ng-type-scale));font-weight:700;line-height:1.5}
+.ng-cicd .ng-disclosure__content > .ng-sub{margin-top:28px!important}
+.ng-cicd .ng-disclosure__content > .ng-sub + *{margin-top:12px!important}
+.ng-cicd .ng-cicd-intro-copy > * + *{margin-top:16px!important}
+.ng-cicd .ng-cicd-flow{display:flow-root}
+.ng-cicd .ng-cicd-flow > .ng-sub{margin:0 0 12px}
+.ng-cicd .ng-cicd-flow > .ng-cicd-note{margin-top:18px}
+.ng-cicd .ng-cicd-figure{float:right;width:44%;max-width:420px;margin:0 0 20px 28px}
+.ng-cicd .ng-cicd-figure .m-fig-label{font-size:calc(15px * var(--ng-type-scale));line-height:1.5}
+.ng-cicd .ng-cicd-branches{width:100%;min-width:0;table-layout:fixed}
+.ng-cicd .ng-cicd-branches th:first-child{width:42%}
+.ng-cicd .ng-cicd-branches tbody th{color:var(--text);font-weight:500;border-bottom:.5px solid var(--line)}
+.ng-cicd .ng-cicd-branches tbody tr:last-child th{border-bottom:none}
+.ng-cicd .ng-cicd-branches code span{white-space:nowrap}
+#cicd-automation .ng-cicd-branches{max-width:680px;padding:4px 16px 8px}
+#cicd-automation .ng-cicd-branches th,#cicd-automation .ng-cicd-branches td{padding:8px 20px 8px 0;word-break:keep-all;overflow-wrap:anywhere}
+#cicd-automation .ng-cicd-branches th:last-child,#cicd-automation .ng-cicd-branches td:last-child{padding-right:0}
+.ng-cicd .ng-cicd-workflow{list-style:decimal;padding-left:1.5em}
+.ng-cicd .ng-cicd-workflow > li{padding-left:5px}
+.ng-cicd .ng-cicd-workflow > li + li{margin-top:22px}
+.ng-cicd .ng-cicd-workflow > li::marker{color:var(--text-3);font-weight:600}
+.ng-cicd .ng-cicd-workflow p + p{margin-top:6px}
+.ng-cicd .ng-cicd-health code{display:block;font-size:calc(14px * var(--ng-type-scale));font-weight:500;line-height:1.6;white-space:normal;overflow-wrap:anywhere}
+.ng-cicd .ng-cicd-note{color:var(--text-2);font-size:calc(15px * var(--ng-type-scale));line-height:1.75}
+.ng-cicd .ng-cicd-policy{margin:0}
+.ng-cicd .ng-cicd-policy > div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding-block:14px}
+.ng-cicd .ng-cicd-policy > div:first-child{padding-top:0}
+.ng-cicd .ng-cicd-policy > div:last-child{padding-bottom:0}
+.ng-cicd .ng-cicd-policy > div + div{border-top:1px solid var(--line-2)}
+.ng-cicd .ng-cicd-policy dt,.ng-cicd .ng-cicd-results dt{color:var(--text);font-weight:700}
+.ng-cicd .ng-cicd-policy dd,.ng-cicd .ng-cicd-results dd{margin:0;min-width:0}
+.ng-cicd .ng-cicd-results{display:grid;gap:22px;padding:0}
+.ng-cicd .ng-cicd-results dd{margin-top:6px}
+@media(max-width:1000px){.ng-cicd .ng-cicd-figure{float:none;width:100%;max-width:360px;margin:0 auto 24px}}
+@media(max-width:600px){
+  .ng-cicd .ng-sub{font-size:calc(17px * var(--ng-type-scale))}
+  .ng-cicd .ng-cicd-branches th:first-child{width:50%}
+  #cicd-automation .ng-cicd-branches{padding:4px 10px 8px}
+  #cicd-automation .ng-cicd-branches th,#cicd-automation .ng-cicd-branches td{padding-right:8px}
+  #cicd-automation .ng-cicd-branches th:last-child,#cicd-automation .ng-cicd-branches td:last-child{padding-right:0}
+  .ng-cicd .ng-cicd-policy > div{grid-template-columns:minmax(0,1fr);gap:4px}
+  .ng-cicd .ng-cicd-workflow > li + li{margin-top:18px}
+  .ng-cicd .ng-cicd-workflow{padding-left:0;list-style-position:inside}
+  .ng-cicd .ng-cicd-workflow > li{padding-left:0}
+  .ng-cicd .ng-cicd-workflow > li > p:first-child{display:inline}
+  .ng-cicd .ng-cicd-note{font-size:calc(14.5px * var(--ng-type-scale))}
+}
+@media(max-width:600px){
+  .ng-solutions .ng-solution-heading{column-gap:12px;margin-bottom:16px}
+  .ng-solutions .m-sol__num{font-size:calc(19px * var(--ng-type-scale))}
+  .ng-solutions .m-sol__sub{font-size:calc(23px * var(--ng-type-scale))}
+  .ng-solutions .ng-solution-sections{padding-left:14px;margin-top:16px}
+  .ng-solutions .ng-disclosure > summary{padding-block:18px;min-height:64px}
+  .ng-solutions .ng-disclosure > summary .m-sol__block-title{font-size:calc(21px * var(--ng-type-scale))}
+  .ng-solutions .ng-disclosure__chevron{top:26.9px}
+  .ng-solutions .m-sol__block-desc,.ng-solutions .m-cap,.ng-solutions .m-list p{font-size:calc(15.5px * var(--ng-type-scale))}
+  .ng-solutions .m-cap{font-size:calc(14.5px * var(--ng-type-scale))}
+  .ng-solutions .m-table{width:100%;min-width:0;table-layout:fixed;padding:6px 10px 10px;font-size:calc(14px * var(--ng-type-scale))}
+  .ng-solutions .m-table th,.ng-solutions .m-table td{padding:10px 8px 10px 0;white-space:normal;overflow-wrap:anywhere}
+  .ng-solutions .m-table th:last-child,.ng-solutions .m-table td:last-child{padding-right:0}
+  .ng-solutions .m-table code{white-space:normal;overflow-wrap:anywhere}
+}
+@media(prefers-reduced-motion:reduce){.ng-solutions .ng-disclosure__chevron{transition:none}}
+</style>
+</head>
+<body class="is-case">
+
+<a href="#main" class="skip-link">본문 바로가기</a>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="../../index.html" class="nav__logo">LEE JAEHYEOK</a>
+    <nav class="nav__menu" aria-label="주요 섹션">
+      <a href="../../index.html#work">WORK</a>
+      <a href="../../index.html#skills">SKILLS</a>
+      <a href="../../index.html#experience">EXPERIENCE</a>
+      <a href="../../assets/docs/resume.pdf" target="_blank" rel="noopener" class="nav__resume">RESUME</a>
+    </nav>
+    <button class="nav__toggle" id="navToggle" aria-label="메뉴 열기" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="case">
+  <div class="case__wrap">
+    <a class="case__back case__back--top" href="../../index.html#work"><span aria-hidden="true">←</span> Work experience</a>
+  <div class="m-head">
+    <h1 class="m-title">차세대 통합 메시징 플랫폼</h1>
+    <dl class="m-meta">
+<!--      <dt>기간</dt><dd>2023.04 — 2025.06</dd>-->
+        <dt>팀 인원</dt><dd>7명 (BE 5명, FE 2명)</dd>
+        <dt>역할</dt><dd>개발 리더, PM/PA</dd>
+      <dt>기술</dt><dd>
+      <div class="chips chips--static">
+        <span class="chip" data-skill="java"><span class="chip__ico" aria-hidden="true"></span><span class="chip__name">Java 17</span></span>
+        <span class="chip" data-skill="spring"><span class="chip__ico" aria-hidden="true"></span><span class="chip__name">Spring Boot 3.x</span></span>
+        <span class="chip" data-skill="webflux"><span class="chip__ico" aria-hidden="true"></span><span class="chip__name">Spring WebFlux</span></span>
+        <span class="chip" data-skill="cloud"><span class="chip__ico" aria-hidden="true"></span><span class="chip__name">Spring Cloud</span></span>
+        <span class="chip" data-skill="r2dbc"><span class="chip__ico" aria-hidden="true"></span><span class="chip__name">R2DBC</span></span>
+        <span class="chip" data-skill="mariadb"><span class="chip__ico" aria-hidden="true"></span><span class="chip__name">MariaDB</span></span>
+        <span class="chip" data-skill="redis"><span class="chip__ico" aria-hidden="true"></span><span class="chip__name">Redis</span></span>
+        <span class="chip" data-skill="rabbitmq"><span class="chip__ico" aria-hidden="true"></span><span class="chip__name">RabbitMQ</span></span>
+        <span class="chip" data-skill="k6"><span class="chip__ico" aria-hidden="true"></span><span class="chip__name">k6</span></span>
+      </div>
+    </dd>
+    </dl>
+  </div>
+
+  <section class="m-sec">
+    <p class="m-sec__label-mt"><img class="ico ico--lg" src="../../assets/img/icon/overview_icon.png" alt="" aria-hidden="true">개요</p>
+      <p class="m-summary">약 300개 고객사의 문자(SMS, LMS, MMS, RCS, 알림톡) 발송을 처리하는 B2B 서비스로 월 평균 9천만건을 처리하는 플랫폼이며,<br>
+          Polyglot(C, Java, Python) 환경이었던 해당 플랫폼을 Java와 Spring Cloud 기반의 MSA로 통합하는 프로젝트입니다.
+      </p>
+
+      <p class="m-fig-label">기존 레거시 아키텍처</p>
+      <div class="m-fig">
+        <img src="../../assets/img/project/nextgen-messaging-platform/arch-legacy.png" data-zoom alt="" loading="lazy" decoding="async">
+      </div>
+  </section>
+
+  <section class="m-sec">
+    <p class="m-sec__label"><img class="ico ico--lg" src="../../assets/img/icon/question_mark.png" alt="" aria-hidden="true" loading="lazy" decoding="async">마주했던 문제</p>
+    <div class="m-list">
+      <div>
+        <h4>기술 스택의 파편화</h4>
+        <p>언어, 프레임워크, 배포, 장애 대응이 서비스마다 달라, 공통 기능 하나를 추가해도 서비스별로 따로 분석, 개발, 검증해야 했으며, 각 서비스에 기능에는 필요한 서버가 제각각이어서 증설 시 IDC에 다수의 서버가 투입되어야했습니다.</p>
+      </div>
+      <div>
+        <h4>과도한 운영 리소스 비용</h4>
+        <p>회사에서는 고객들에게 보다 쉽고 편리하게 서비스를 제공하기위해 Agent를 제공했지만, 고객사마다 환경이 다르고 그에따라 Agent 커스터마이징이 요구되었으며, 고객사가 증가함에따라 원격 및 현장지원하는 업무가 많아 비효율적인 운영업무가 지속됐었습니다.</p>
+      </div>
+      <div>
+        <h4>연동 구조의 문제</h4>
+        <p>고객사 클라이언트가 TCP/IP로 특정 서버에 직접 연결되는 구조였습니다. 서버를 증설하거나 이관하려면 고객사마다 일정을 잡고 클라이언트 설정을 바꿔야 했고, 세션이 모놀리식 서버에 묶여 있어 해당 서버 작업 시 연결되어져 있는 고객사한테 안내 및 조치를 해야하는 상황이었습니다.</p>
+      </div>
+      <div>
+        <h4>간편한 외부 인터페이스의 부재</h4>
+        <p>기존 Agent가 서버와 소통하는 방식으로 API를 지원했지만, 다소 난이도가 있기에 수요가 없던 상황이었습니다. 하지만 해당 서비스 시장의 경쟁력중 하나인 간편한 외부 인터페이스를 통한 고객의 접근성을 확보하는게 목표였고 이 목표를 기반으로 기존에 있던 레거시의 문제점을 보완한 새로운 플랫폼을 설계하게됩니다.</p>
+      </div>
+    </div>
+  </section>
+
+<!--    <section class="m-sec">-->
+<!--        <p class="m-sec__label is-accent">TO-BE · 개선 구조</p>-->
+<!--        <div class="m-fig">-->
+<!--            <img src="../../assets/img/project/nextgen-messaging-platform/arch-nextgen.png" data-zoom alt="" loading="lazy" decoding="async">-->
+<!--        </div>-->
+<!--        <p class="m-cap">기술 스택을 통합하고, 서비스 요청 입구를 하나의 도메인으로 묶어 각각의 엔드포인트로 서비스를 호출하는 마이크로서비스 아키텍처입니다.</p>-->
+<!--    </section>-->
+
+  <section class="m-sec">
+<!--      <p class="m-sec__label"><img class="ico ico&#45;&#45;lg" src="../../assets/img/icon/Exclamation_mark.png" alt="" aria-hidden="true" loading="lazy" decoding="async">해결 과정</p>-->
+    <p class="m-sec__label"><img class="ico ico--lg" src="../../assets/img/icon/solution_mark.png" alt="" aria-hidden="true" loading="lazy" decoding="async">해결 과정</p>
+    <div class="m-sol ng-solutions">
+      <article class="m-sol__item m-sol__item--integrated" aria-labelledby="integration-title">
+        <div class="ng-solut Heap 사용량 최댓ion-heading">
+          <p class="m-sol__num" aria-hidden="true">01</p>
+          <h3 class="m-sol__sub" id="integration-title">Java/Spring Cloud 기반의 시스템 통합으로 비용 감축과 업무 프로세스 개선</h3>
+        </div>
+        <div class="m-sol__body">
+
+          <div class="ng-solution-sections" role="group" aria-labelledby="integration-title">
+          <details class="m-sol__block ng-disclosure" id="service-unification">
+            <summary class="m-sol__head">
+              <h4 class="m-sol__block-title">개발 언어 통합과 MSA를 선택한 이유</h4>
+              <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="ng-disclosure__content">
+              <p class="m-sol__block-desc">문자 전송 서비스는 클라이언트 인증, 발신번호 검증, 이동통신사 조회, 스팸 검출, 파일 처리 등 다양한 기능이 전송 과정에 연계되어 있으며, 정책과 사업 방향에 따라 기능이 계속 변경되거나 추가됩니다. 향후 신규 서비스가 추가될 경우 모놀리식 구조에서는 기능 간 결합도가 높아지고 변경에 따른 영향 범위가 확대될 것으로 판단해 MSA를 선택했습니다.
+
+                  또한 기존 레거시 시스템에 분산되어 있던 문자 외부망 라우팅, 요청 접수, 전송 이력, 파일 관리, 스팸 처리 등의 기능을 응집도 기준으로 묶어 마이크로서비스로 분리했습니다.</p>
+
+
+
+              <figure class="m-sol__figure">
+              <figcaption class="m-fig-label">Polyglot 환경의 서비스들을 분류 및 통합</figcaption>
+              <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/solution_1_1.png" data-zoom alt="" width="1920" height="1350" loading="lazy" decoding="async"></div>
+            </figure>
+<!--              <figure class="m-sol__figure">-->
+<!--                  <figcaption class="m-fig-label">차세대 아키텍처</figcaption>-->
+<!--                  <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/arch-nextgen.png" data-zoom alt="차세대 플랫폼 아키텍처" loading="lazy" decoding="async"></div>-->
+<!--              </figure>-->
+            </div>
+          </details>
+
+            <details class="m-sol__block ng-disclosure">
+                <summary class="m-sol__head">
+                    <h4 class="m-sol__block-title">Spring Cloud 도입과 서비스 개발</h4>
+                    <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+                </summary>
+                <div class="ng-disclosure__content">
+                <h5 class="ng-sub">[ Spring Cloud를 도입한 이유 ]</h5>
+                <ul class="m-sol__block-desc ng-points">
+                    <li>다양한 레퍼런스
+                        <ul>
+                            <li>Spring Cloud는 공식 Reference Documentation뿐만 아니라 Getting Started Guide와 기능별 Sample 프로젝트를 제공하고 있어, 기능의 동작 방식과 실제 구현 방법을 함께 확인할 수 있었습니다. 특히 Gateway, Eureka, Config Server, Circuit Breaker 등 MSA 구성에 필요한 기능별 예제 코드가 제공되어 아키텍처를 설계하고 구현하는 과정에서 참고하기에 충분하다고 판단했습니다.
+                                <ul class="ng-links">
+                                    <li>ㄴ <a href="https://github.com/spring-cloud-samples" target="_blank" rel="noopener">Spring Cloud 공식 Sample 프로젝트</a></li>
+                                    <li><a href="https://spring.io/guides/gs/gateway/" target="_blank" rel="noopener">Spring Cloud Gateway 공식 Guide</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Spring Cloud의 실제 활용 사례
+                        <ul>
+                            <li>기술 자체의 기능뿐만 아니라 실제 서비스에서도 활용되고 있는지를 확인했습니다. 토스에서는 Spring Cloud Gateway를 이용해 대규모 MSA 환경의 Gateway를 구성하고 있으며, 사람인에서는 Spring Cloud Gateway, Eureka, Config Server 등을 조합해 실제 운영 API Gateway를 구축한 사례를 공개하고 있습니다. 또한 우아한형제들에서도 Spring Cloud Zuul로 API Gateway를 구성한 사례를 공개하고 있어, 운영 환경에서 충분히 검증된 기술이라고 판단했습니다.
+                                <ul class="ng-links">
+                                    <li>ㄴ <a href="https://toss.tech/article/22910" target="_blank" rel="noopener">토스는 Gateway 이렇게 씁니다</a></li>
+                                    <li><a href="https://saramin.github.io/2022-01-20-spring-cloud-gateway-api-gateway/" target="_blank" rel="noopener">사람인 - Spring Cloud Gateway를 이용한 API Gateway 구축기</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>지속적인 유지보수
+                        <ul>
+                            <li>Spring Cloud의 GitHub를 확인했을 때 Gateway, Config, Circuit Breaker, Kubernetes 등 주요 프로젝트에서 Issue와 Pull Request가 지속적으로 관리되고 있으며, 새로운 버전도 꾸준히 릴리스되고 있음을 확인했습니다. 실제 운영 중 문제가 발생했을 때 기존 논의와 해결 사례를 참고할 수 있고, 장기적으로 사용하기에도 지속적인 유지보수를 기대할 수 있는 생태계라고 판단했습니다.
+                                <ul class="ng-links">
+                                    <li>ㄴ <a href="https://github.com/spring-cloud" target="_blank" rel="noopener">Spring Cloud GitHub</a></li>
+                                    <li><a href="https://github.com/spring-cloud/spring-cloud-release/releases" target="_blank" rel="noopener">Spring Cloud Release</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <h5 class="ng-sub">[ Spring Cloud를 적용한 차세대 아키텍처 ]</h5>
+
+                <figure class="m-sol__figure ng-architecture">
+                    <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/arch-nextgen.png" data-zoom alt="Gateway, Eureka, Config Server와 RabbitMQ로 연결한 차세대 통합 메시징 플랫폼 구성도" width="2600" height="2303" loading="lazy" decoding="async"></div>
+                </figure>
+                    <ul class="m-sol__block-desc ng-dev-list">
+                        <li>Eureka와 LoadBalancer를 통한 정상 인스턴스 요청 분산, Discovery Server 3대 클러스터링으로 장애 대비</li>
+                        <li>Config Server를 통한 공통 설정과 서비스별 설정 중앙 관리</li>
+                        <li>Discovery Server의 인스턴스 조회 API를 활용한 서비스 상태 모니터링 구축</li>
+                    </ul>
+                    <h5 class="ng-sub">[ 백엔드 서비스 개발 ]</h5>
+                <p class="m-cap">설계된 구성도에서 직접 개발을 진행한 서버들입니다.<br>
+                    Reactive Non-blocking 환경에 맞추어 Spring Webflux 기반으로 개발되었습니다.</p>
+                <div class="m-list m-list--dev">
+                    <div>
+                        <h4>Spring Cloud API Gateway<span class="m-icos"><i data-skill="redis" role="img" aria-label="Redis" title="Redis"></i><i data-skill="webflux" role="img" aria-label="Spring WebFlux" title="Spring WebFlux"></i></span></h4>
+                        <p>서비스 요청의 최초 진입점으로 내장 LoadBalancer를 통해 요청을 분산처리할 수 있으며, 요청 인증과 TPS 제한 정책을 주로 담당하는 서버입니다.</p>
+                        <ul class="ng-dev-list">
+                            <li>서비스 요청량 제한 구현 - Spring Cloud의 RedisRateLimiter의 Token Bucket 알고리즘으로 요청량이 제한되며, 클라이언트별로 관리할 수 있도록 구현했습니다.</li>
+                            <li>서비스 요청을 처리하는 백엔드 서버에서 지연이 발생할 경우 스레드를 오래 점유하지 않도록 하는 Circuit Breaker 기반의 Fail-Fast 정책을 구현했습니다.</li>
+                            <li>보안을 위해 사용자의 요청에 대해서 인증서버에서 발급한 JWT를 검증하고, 흐름에 필요한 데이터가 세팅되는 Filter를 구현했습니다.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Message API Server<span class="m-icos"><i data-skill="redis" role="img" aria-label="Redis" title="Redis"></i><i data-skill="webflux" role="img" aria-label="Spring WebFlux" title="Spring WebFlux"></i><i data-skill="rabbitmq" role="img" aria-label="RabbitMQ" title="RabbitMQ"></i></span></h4>
+                        <p>고객에게 메시징 서비스를 제공하기위한 RESTful API 서버입니다.</p>
+                        <ul class="ng-dev-list">
+                            <li>Jakarta Bean Validation 어노테이션 기반의 문자 규격 검사</li>
+                            <li>Redis SET NX를 이용한 메시지 중복 처리</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Router<span class="m-icos"><i data-skill="webflux" role="img" aria-label="Spring WebFlux" title="Spring WebFlux"></i><i data-skill="redis" role="img" aria-label="Redis" title="Redis"></i><i data-skill="rabbitmq" role="img" aria-label="RabbitMQ" title="RabbitMQ"></i></span></h4>
+                        <p>비즈니스의 핵심 서버로, 매출 수익을 위해 메시지 전송 쿼터량을 여러 외부망 Sender 서버에게 배분해주는 서버입니다.</p>
+                        <ul class="ng-dev-list">
+                            <li>Redis에 외부망 전송 쿼터량과 메시지 단가 데이터가 저장된 데이터를 기반으로 가중치 알고리즘을 사용한 메시지 전송 로직을 구현했습니다.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Reporter<span class="m-icos"><i data-skill="webflux" role="img" aria-label="Spring WebFlux" title="Spring WebFlux"></i><i data-skill="rabbitmq" role="img" aria-label="RabbitMQ" title="RabbitMQ"></i></span></h4>
+                        <p>이동통신사 서버로부터 전달받은 발송 처리 결과를 고객사측에게 Webhook방식으로 전달하는 Report 서버입니다.</p>
+                        <ul class="ng-dev-list">
+                            <li>Spring WebFlux WebClient 기반의 Webhook 모듈 구현 및 API 설계</li>
+                            <li>서비스 품질을 위해 Timeout, Retry, Circuit Breaker 정책을 적용하고, HTTP 통신에서 발생할 수 있는 모든 예외처리를 작성했습니다.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>DB Logger<span class="m-icos"><i data-skill="webflux" role="img" aria-label="Spring WebFlux" title="Spring WebFlux"></i><i data-skill="r2dbc" role="img" aria-label="R2DBC" title="R2DBC"></i><i data-skill="rabbitmq" role="img" aria-label="RabbitMQ" title="RabbitMQ"></i></span></h4>
+                        <p>플랫폼 내부에서 처리되는 문자 이력을 관리하는 서버입니다.</p>
+                        <ul class="ng-dev-list">
+                            <li>DB I/O를 위해 Reactive Non-Blocking 환경에 맞는 R2DBC를 사용한 이력 저장 기능 구현과 높은 트래픽과 비동기 환경에서 과도한 Update를 방지하기위해 Upsert를 사용했습니다.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Storage Server<span class="m-icos"><i data-skill="spring" role="img" aria-label="Spring Boot" title="Spring Boot"></i><i data-skill="rabbitmq" role="img" aria-label="RabbitMQ" title="RabbitMQ"></i></span></h4>
+                        <p>문자의 첨부파일을 관리하는 파일 서버입니다.</p>
+                        <ul class="ng-dev-list">
+                            <li>파일명, 확장자 및 MD5 해시값을 기준으로 파일 중복 검증 로직을 구현하여 불필요한 중복 저장을 방지하고 저장 공간의 효율성을 높였습니다.</li>
+                            <li>Claim Check Pattern을 적용하여 파일 바이너리를 별도 Storage에 저장하고, 서비스 간에는 파일 식별 Key만 전달하도록 설계하여 불필요한 바이너리 전송과 메모리 사용을 최소화했습니다.</li>
+                            <li>높은 트래픽 환경에서 첨부파일 처리 지연을 방지하기위해 다운로드 API에 Zero-Copy를 적용하여 불필요한 메모리 복사를 줄이고 CPU 부하를 최소화했습니다.</li>
+                        </ul>
+                    </div>
+                </div>
+                </div>
+            </details>
+
+          <details class="m-sol__block ng-disclosure">
+            <summary class="m-sol__head">
+              <h4 class="m-sol__block-title">RabbitMQ를 활용한 이벤트 통신 설계</h4>
+              <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="ng-disclosure__content">
+              <ul class="m-sol__block-desc ng-points">
+                  <li>이벤트 전파
+                      <ul>
+                          <li>메시지 전송 요청이 발생했을 때, 독립적으로 수행되어도 되는 &lt;발송 이력 저장&gt;과 &lt;메시지 라우팅&gt; 작업을 처리하는 각 서버 A, B에게 요청 할 때 Request를 2번 날리는 것이 아닌, RabbitMQ의 Topic Exchange를 활용하여 메시지 전송 요천 이벤트가 발행되면, 서버 A,B가 해당 Exchange에 있는 각자의 Queue Routing key로 이벤트를 전파받게됩니다.
+                          이로써, 다른 백엔드 서버로 요청을 여러번 하는 것이 아닌 한번만 이벤트를 발행하여, 해당 이벤트가 필요한 서버가 해당 이벤트를 받을 수 있는 구조로, 클라이언트에게 더 빠른 응답이 가능하게되었습니다.</li>
+                      </ul>
+                  </li>
+                  <li>이벤트 유실 방지
+                      <ul>
+                          <li>각 백엔드 서버에서 이벤트를 발행하거나 소비할 때, 정확한 처리를 위해 RabbitMQ의 기능과 방어코드로 유실없는 이벤트 처리를 할 수 있었습니다.
+                              <ul>발행 : 서버가 이벤트를 발행할 때, 정확히 RabbitMQ에 전달되었는지 Publish Confirm 기능을 통해 RabbitMQ로부터 응답을 받기때문에 정확한 예외처리가 가능했습니다.</ul>
+                              <ul>소비 : RabbitMQ의 Manual Ack Mode를 통해 소비 서버가 Ack를 보내기 전 까지는 Queue에서 메시지가 소비되지않기 때문에 이벤트 유실이 발생하지 않았습니다.</ul>
+                          </li>
+                      </ul>
+                  </li>
+                  <li>재처리의 위험성 방지
+                      <ul>
+                          <li>프로세스나 비즈니스 로직에 의해서 재처리를 해야하는 경우 Queue에서 가져온 메시지에 대해 Reject을 하게되는데, 이때 Reject에 의해 다시 Queue로 돌아가면 재처리를 해야될 메시지와 신규 메시지가 섞이면서 서비스 품질이 떨어질 수 있습니다.
+                              이에 RabbitMQ의 DLX/DLQ (Dead Letter Exchange/Queue)를 구성하여 재처리가 필요한 메시지는 DLX/DLQ로 분리되어 처리되도록 했습니다.
+                          </li>
+                      </ul>
+                  </li>
+              </ul>
+            </div>
+          </details>
+
+
+            <details class="m-sol__block ng-disclosure" id="integration-result" data-independent open>
+                <summary class="m-sol__head">
+                    <h4 class="m-sol__block-title">결과</h4>
+                    <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+                </summary>
+                <div class="ng-disclosure__content">
+                <ul class="m-sol__block-desc ng-points">
+                    <li>개발 비용 감소와 서버 자원 확보
+                        <ul>
+                            <li>공통 기능을 담당 서비스에서 관리하도록 통합해, 문자 유형과 개발 환경에 따라 발생하는 개발 리소스를 줄이고, 서비스가 통합됨에 따라 레거시 시스템을 정리하면서 하드웨어 82대를 확보했습니다.</li>
+                        </ul>
+                    </li>
+                    <li>가중치 라우팅으로 전송 비용 30% 절감과 영업 이익 21% 증가
+                        <ul>
+                            <li>실제 문자를 처리해 전송되는 외부망과의 계약 쿼터를 우선 충족하고, 남는 물량은 단가가 낮은 경로로 배분해 레거시 대비 전송 비용을 30% 절감했습니다. 또한, 기존에 라우팅 정책을 영업팀에서 운영팀에게 요청하여 운영팀이 직접 JavaScript를 수정해 반영하던 방식에서, 영업팀이 관리자 화면을 통해 직접 조정하는 방식으로 변경됨에따라 단가 흐름에 맞추어 시스템을 컨트롤 할 수 있게되어 영업 이익이 레거시(차세대 이전 년도 기준) 대비 21% 증가되었습니다. </li>
+                        </ul>
+                    </li>
+                    <li>무중단 Scale-out을 통한 서비스 확장
+                        <ul>
+                            <li>기존에는 모놀리식 서버를 추가로 설치하고, 고객사와 협의하여 Agent를 고객사가 추가로 증설하는 작업을 일정협의를 통해 진행하는 작업을 Spring Cloud의 Discovery기반의 API Gateway Loadbalancer 기능으로 고객사 영향 없이 서버를 증설할 수 있게되었습니다.</li>
+                        </ul>
+                    </li>
+                    <li>TPS 증설 절차 단축
+                        <ul>
+                            <li>고객사의 요청 제한량을 운영 중 변경할 수 있게 되면서, TPS 증설에 필요했던 설정 수정과 재기동 절차를 줄였습니다.
+                                <ul class="ng-links ng-tps-flow">
+                                    <li><strong>기존</strong><br>
+                                    고객사의 증설 요청(메일 또는 전화) → 증설 코드 발급 → 고객사 설정 변경 → 일정 협의 후 클라이언트 재기동</li>
+                                </ul>
+                                <ul class="ng-links ng-tps-flow">
+                                    <li><strong>개선</strong><br>
+                                    고객사 Customer Web을 통한 증설 요청 → 관리자 승인 → Redis에 TPS Bucket 적용</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>REST API 제공으로 고객사 연동 지원 업무 개선
+                        <ul>
+                            <li>REST API로 연동한 고객사는 Agent 설치와 환경별 커스터마이징이 필요 없어, 이에 따른 원격 지원과 현장 지원 업무가 발생하지 않았으며, 2024년 2월부터 2025년 5월까지 연동 관련 VOC가 0건으로 집계됐습니다.</li>
+                        </ul>
+                    </li>
+                </ul>
+                </div>
+            </details>
+          </div>
+<!--          <hr class="m-rule">-->
+
+<!--          <div class="m-sol__block">-->
+<!--            <div class="m-sol__head">-->
+<!--              <h4 class="m-sol__block-title">고객사 연동 지원 업무 개선</h4>-->
+<!--            </div>-->
+<!--            <p class="m-sol__block-desc">Agent 설치와 커스터마이징에 따른 지원 부담을 줄이고, 고객사가 직접 연동할 수 있는 인터페이스를 제공하기 위해 문자 발송 REST API를 개발했습니다. API Gateway를 공통 진입점으로 두고, 요청에 맞는 내부 서비스로 연결하도록 구성했습니다.</p>-->
+<!--          </div>-->
+
+<!--          <section class="m-sol__result" aria-labelledby="architecture-result-title">-->
+<!--            <h4 class="m-sol__result-title" id="architecture-result-title">적용 결과</h4>-->
+<!--            <ul class="m-sol__result-list">-->
+<!--              <li>-->
+<!--                <strong>공통 기능을 담당 서비스에서 관리</strong>-->
+<!--                <p>문자 유형별로 같은 기능을 각각 수정하던 방식에서, 검증과 라우팅, 이력 처리를 담당하는 공통 서비스에서 관리하는 방식으로 변경.</p>-->
+<!--              </li>-->
+<!--              <li>-->
+<!--                <strong>서버 구성과 고객사 접속 설정 분리</strong>-->
+<!--                <p>고객사는 Gateway 주소로 요청하고, 내부 서버의 위치와 요청 분산은 플랫폼에서 관리하도록 구성.</p>-->
+<!--              </li>-->
+<!--              <li>-->
+<!--                <strong>Agent 외에 REST API 연동 제공</strong>-->
+<!--                <p>고객사별 Agent 연동 외에도 SMS, MMS, RCS, 알림톡 발송을 API로 직접 요청할 수 있는 인터페이스 제공.</p>-->
+<!--              </li>-->
+<!--            </ul>-->
+<!--          </section>-->
+        </div>
+      </article>
+
+      <article class="m-sol__item" aria-labelledby="reactive-title">
+        <div class="ng-solution-heading">
+          <p class="m-sol__num" aria-hidden="true">02</p>
+          <h3 class="m-sol__sub" id="reactive-title">한정된 하드웨어에서 처리 효율을 높이기 위한 WebFlux 도입</h3>
+        </div>
+        <div class="m-sol__body">
+<!--              해당 서비스는 온프레미스 환경에서 운영되고 있어 트래픽 증가에 맞춰 서버를 즉시 확장하기 어려웠습니다. 장비 증설에는 IDC 랙 공간 확보부터 구매부터 설치까지 상당한 시간이 필요했기 때문에 가용한 서버 처리량을 항상 인지하고 확보해야되는 상황이었기에 한정된 하드웨어에서 얼마나 많은 트래픽을 안정적으로 처리할 수 있는지가 중요했습니다.-->
+
+<!--              문자 전송 서비스는 외부 API, DB, Redis, RabbitMQ 등 I/O 작업이 많고 높은 동시성을 요구하는 구조였습니다. 이에 I/O 대기 중 Thread를 점유하지 않고 소수의 Thread로 많은 요청을 처리할 수 있는 Spring WebFlux의 Reactive Non-Blocking 모델이 이러한 환경에 적합하다고 판단했습니다.-->
+
+<!--              다만 이론적인 장점만으로 기술을 선택하지 않고, 동일한 환경에서 MVC와 WebFlux의 처리량, 응답시간, Thread 사용량을 비교하는 성능 테스트를 진행했습니다.-->
+<!--          </p>-->
+
+<!--          <div class="m-sol__block">-->
+<!--            <div class="m-sol__head">-->
+<!--&lt;!&ndash;              <span class="m-sol__step">STEP 01</span>&ndash;&gt;-->
+<!--              <h4 class="m-sol__block-title">테스트 목적</h4>-->
+<!--            </div>-->
+<!--            <p class="m-sol__block-desc">WebFlux가 실제로 이점을 주는지 검증하는 것을 목표로 비교 대상은 Spring MVC로 정했습니다.-->
+<!--                정해진 하드웨어 스펙에서 높은 트래픽을 부하했을때 얼마나 안정적으로 요청을 처리할 수 있는지를 JVM과 하드웨어 관점에서 분석하는 것이 목표입니다.-->
+<!--            </p>-->
+<!--          </div>-->
+
+          <div class="ng-solution-sections" role="group" aria-labelledby="reactive-title">
+          <details class="m-sol__block ng-disclosure" id="reactive-adoption">
+            <summary class="m-sol__head">
+              <h4 class="m-sol__block-title">WebFlux 도입 이유</h4>
+              <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="ng-disclosure__content">
+              <p class="m-sol__block-desc">사내 온프레미스 환경에서는 서버 증설 시 IDC 랙 공간 확보부터 장비 구매와 설치까지 거쳐야 했습니다. 트래픽 증가에 따라 서버를 즉시 증설하기 어려웠기 때문에, 한정된 하드웨어에서 높은 처리량을 확보하는 것이 중요했습니다.</p>
+              <p class="m-sol__block-desc">문자 전송 서비스는 요청 처리 과정에서 외부 API, DB, Redis 등 다수의 I/O 작업이 발생하는 구조로, 동기식 Spring MVC에서는 외부 응답을 기다리는 동안에도 요청 처리 Thread가 점유되어 동시 요청 증가 시 Thread Pool이 병목이 될 가능성이 있었습니다.</p>
+              <p class="m-sol__block-desc">이에 I/O 대기 중 Thread 점유를 최소화하고 적은 수의 Thread로 높은 동시성을 처리할 수 있는 Spring WebFlux를 선택했습니다. 또한 동일한 환경에서 MVC와의 성능 테스트를 진행하여 처리량, 응답시간, Thread 사용량을 비교하고 기술 선택의 적합성을 검증했습니다.</p>
+            </div>
+          </details>
+
+          <details class="m-sol__block ng-disclosure" id="reactive-benchmark">
+            <summary class="m-sol__head">
+<!--              <span class="m-sol__step">STEP 02</span>-->
+              <h4 class="m-sol__block-title">MVC와 Webflux 벤치마킹</h4>
+              <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="ng-disclosure__content">
+            <h5 class="ng-sub">테스트 환경</h5>
+            <p class="m-sol__block-desc">실제 서비스는 외부 API와 DB, Redis를 호출하는 구간이 많습니다. API 응답 대기를 가정해 양쪽 모두 50ms 지연을 두고 비교했습니다.</p>
+              <p class="m-sol__block-desc">측정은 두 방식으로 나눴습니다. <strong>동시 사용자 수(VU)</strong>를 올리는 방식으로는 동시성 처리 효율을, <strong>초당 요청 수(TPS)</strong>를 고정하는 방식으로는 같은 유입 부하에서의 응답시간과 처리 안정성을 봤습니다.</p>
+              <div class="m-sol__row m-sol">
+                      <table class="m-table">
+                          <tbody>
+                          <tr><td>서버 OS</td><td>Cent OS (1대)</td></tr>
+                          <tr><td>로직</td><td>MVC는 <code>Thread.sleep(50)</code>, WebFlux는 <code>delayElement(50)</code></td></tr>
+                          <tr><td>GC</td><td>G1</td></tr>
+                          <tr><td>하드웨어 스펙</td><td>4 core 8 thread</td></tr>
+                          </tbody>
+                      </table>
+              </div>
+
+              <h5 class="ng-sub">동시 사용자 수 부하 테스트</h5>
+              <p class="m-sol__block-desc">우선, 동시 사용자 수를 50에서 100, 250, 500까지 단계적으로 올리고 정확한 측정을 위해서 warm-up을 거친 뒤 부하 테스트를 수행했습니다.</p>
+              <p class="m-fig-label">구간별 테스트</p>
+                  <div class="m-fig m-fig--md">
+                      <img src="../../assets/img/project/nextgen-messaging-platform/bench/raw-vu-csv.png" alt="구간별 원본 집계" width="581" height="131" loading="lazy" decoding="async"></div>
+              <p class="m-cap">구간마다 처리량과 p95를 기록하고 모델 간 차이확인해 보았습니다.</p>
+              <div class="m-sol__row m-sol__row--split">
+                  <div class="m-fig">
+                      <img src="../../assets/img/project/nextgen-messaging-platform/bench/bench_tps.png" data-zoom alt="동시 사용자 수에 따른 처리량" width="991" height="468" loading="lazy" decoding="async"></div>
+                  <div class="m-fig">
+                      <img src="../../assets/img/project/nextgen-messaging-platform/bench/bench_p95.png" data-zoom alt="동시 사용자 수에 따른 p95 응답시간" width="996" height="463" loading="lazy" decoding="async"></div>
+              </div>
+
+            <p class="m-sol__block-desc"><a href="https://docs.spring.io/spring-framework/reference/web/webflux/new-framework.html" target="_blank" rel="noopener">Spring 공식 문서</a>를 참고하여 스레드 모델 비교 데이터를 참고하여, 처리량과 p95 응답시간과 JMC에서 스레드 수와 상태를 함께 확인했습니다.</p>
+
+                  <p class="m-fig-label">Spring MVC</p>
+              <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/bench/jmc-mvc-threads.png" data-zoom alt="JMC에서 본 MVC 스레드 상태" width="1800" height="974" loading="lazy" decoding="async"></div>
+                  <p class="m-fig-label">Spring WebFlux</p>
+              <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/bench/jmc-webflux-threads.png" data-zoom alt="JMC에서 본 WebFlux 스레드 상태" width="1800" height="974" loading="lazy" decoding="async"></div>
+              <p class="m-cap">MVC는 요청마다 <code>http-nio-exec</code> 스레드가 붙어 목록이 전부 같은 이름으로 채워졌고, WebFlux는 <code>reactor-http-nio-1</code>부터 <code>-8</code>까지 여덟 개가 같은 부하를 받았습니다. 나머지 항목은 GC와 컴파일러 같은 JVM 내부 스레드입니다.</p>
+              <div class="m-fig m-fig--lg"><img src="../../assets/img/project/nextgen-messaging-platform/bench/bench_thread.png" data-zoom alt="부하 구간의 스레드 수 추이" width="1465" height="592" loading="lazy" decoding="async"></div>
+              <p class="m-cap">250 VU 구간에서 20초 동안 측정한 JVM 전체 스레드 수입니다. MVC는 233~234개, WebFlux는 46~48개로 양쪽 다 측정 내내 거의 변하지 않았습니다.</p>
+            </div>
+          </details>
+
+          <details class="m-sol__block ng-disclosure" id="reactive-api-test">
+            <summary class="m-sol__head">
+<!--              <span class="m-sol__step">STEP 04</span>-->
+              <h4 class="m-sol__block-title">실제 API 성능 테스트</h4>
+              <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="ng-disclosure__content">
+            <p class="m-sol__block-desc">Redis와 MariaDB를 각각 조회하는 API에 <strong>1,500 TPS</strong>의 부하를 가했습니다. 같은 요청량에서 MVC와 WebFlux의 스레드 수, JVM 프로세스 CPU 사용률, Heap 사용량을 비교했습니다.</p>
+            <div class="m-sol__row m-sol__row--split m-cmp-cols">
+              <span>Spring MVC</span>
+              <span>Spring WebFlux</span>
+            </div>
+            <p class="m-fig-label">Threads / Thread States</p>
+            <div class="m-sol__row m-sol__row--split">
+              <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/mvc_threads.png" data-zoom alt="MVC 스레드와 스레드 상태" width="2000" height="495" loading="lazy" decoding="async"></div>
+              <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/webflux_thread.png" data-zoom alt="WebFlux 스레드와 스레드 상태" width="2000" height="493" loading="lazy" decoding="async"></div>
+            </div>
+            <p class="m-fig-label">CPU Usage</p>
+            <div class="m-sol__row m-sol__row--split">
+              <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/mvc_cpu.png" data-zoom alt="MVC CPU 사용률" width="1118" height="556" loading="lazy" decoding="async"></div>
+              <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/webflux_cpu.png" data-zoom alt="WebFlux CPU 사용률" width="1118" height="558" loading="lazy" decoding="async"></div>
+            </div>
+            <p class="m-fig-label">JVM Heap</p>
+            <div class="m-sol__row m-sol__row--split">
+              <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/mvc_heap.png" data-zoom alt="MVC JVM Heap" width="411" height="203" loading="lazy" decoding="async"></div>
+              <div class="m-fig"><img src="../../assets/img/project/nextgen-messaging-platform/webflux_heap.png" data-zoom alt="WebFlux JVM Heap" width="799" height="392" loading="lazy" decoding="async"></div>
+            </div>
+            <p class="m-sol__block-desc"><a href="https://docs.spring.io/spring-framework/reference/web/webflux/new-framework.html" target="_blank" rel="noopener">Spring 공식 문서</a>의 스레드 모델 설명과 앞선 벤치마크 결과를 바탕으로, 실제 Redis와 DB 조회가 포함된 API에서도 같은 차이가 나타나는지 확인했습니다.</p>
+            <p class="m-sol__block-desc">측정 그래프에서 WebFlux는 동일한 1,500 TPS 부하를 MVC보다 적은 스레드로 처리했고, JVM 프로세스의 최대 CPU 사용률도 낮게 나타났습니다. 단순히 응답시간을 줄이는 것뿐 아니라, 같은 요청량을 처리할 때 스레드와 CPU 사용량을 줄일 수 있음을 확인했습니다.</p>
+            </div>
+          </details>
+
+          <details class="m-sol__block ng-disclosure" id="reactive-result" data-independent open>
+            <summary class="m-sol__head">
+              <h4 class="m-sol__block-title">결과</h4>
+              <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="ng-disclosure__content">
+            <h5 class="ng-sub" id="reactive-benchmark-result-title">동시 요청 증가 구간에서 처리량과 응답시간 개선</h5>
+            <p class="m-sol__block-desc">50~100 VU에서는 MVC가 소폭 우세했지만, 250~500 VU에서는 WebFlux의 처리량이 높고 p95 응답시간도 짧았습니다. MVC의 처리량이 약 3,400 req/s에서 정체된 반면, WebFlux는 동시 요청 증가에 따라 처리량이 늘면서 p95 응답시간을 약 70ms로 유지했습니다.</p>
+            <p class="m-cap" id="reactive-benchmark-result-context">50ms 대기 API 비교. 250 VU는 모델별 3회, 500 VU는 모델별 1회 측정.</p>
+            <table class="m-table" aria-labelledby="reactive-benchmark-result-title" aria-describedby="reactive-benchmark-result-context">
+              <thead>
+                <tr><th scope="col">지표</th><th scope="col">Spring MVC</th><th scope="col">Spring WebFlux</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>250 VU 처리량 (req/s)</td><td>3,406.1</td><td class="is-hi">4,201.2</td></tr>
+                <tr><td>250 VU p95 응답시간 (ms)</td><td>108.63</td><td class="is-hi">68.50</td></tr>
+                <tr><td>500 VU 처리량 (req/s)</td><td>3,416.4</td><td class="is-hi">8,380.0</td></tr>
+                <tr><td>500 VU p95 응답시간 (ms)</td><td>180.24</td><td class="is-hi">69.63</td></tr>
+              </tbody>
+            </table>
+
+            <h5 class="ng-sub" id="reactive-api-result-title">같은 요청량에서 스레드와 CPU 사용량 감소</h5>
+            <p class="m-sol__block-desc">실제 조회 API에 같은 1,500 TPS 부하를 가했을 때도 WebFlux는 27개 스레드를 유지했고, JVM 프로세스의 최대 CPU 사용률은 MVC보다 낮게 측정됐습니다. Heap은 순간 사용량과 최대 사용량을 구분해 비교했습니다.</p>
+            <p class="m-cap" id="reactive-api-result-context">Redis와 MariaDB 조회 API, 1,500 TPS. 스레드 상태와 CPU는 차트의 Max, Heap은 Max와 Last를 구분해 표기.</p>
+            <table class="m-table" aria-labelledby="reactive-api-result-title" aria-describedby="reactive-api-result-context">
+              <thead>
+                <tr><th scope="col">지표</th><th scope="col">Spring MVC</th><th scope="col">Spring WebFlux</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>피크 스레드 수 (peak)</td><td>118</td><td class="is-hi">27</td></tr>
+                <tr><td>상태별 최댓값 (timed-waiting / runnable)</td><td>107 / 39</td><td class="is-hi">7 / 14</td></tr>
+                <tr><td>JVM 프로세스 CPU 최댓값</td><td>36.4%</td><td class="is-hi">27.6%</td></tr>
+                <tr><td>JVM Heap 사용량</td><td>1.19 GB</td><td>471 MB</td></tr>
+              </tbody>
+            </table>
+
+            <h5 class="ng-sub">측정 결과를 바탕으로 Non-Blocking 적용</h5>
+            <p class="m-sol__block-desc">동시 요청이 늘어날 때의 처리 효율과 같은 부하에서의 자원 사용량을 근거로 WebFlux를 적용했습니다. DB 접근은 R2DBC, 고객사 Webhook 호출은 WebClient로 구성해 I/O를 비동기 방식으로 처리하도록 했습니다.</p>
+            <p class="m-cap">위 수치는 비교용 대기 API와 Redis/MariaDB 조회 API의 측정 결과이며, 플랫폼 전체의 문자 발송 처리량과는 구분합니다.</p>
+            </div>
+          </details>
+          </div>
+
+<!--          <section class="m-sol__result" aria-labelledby="reactive-result-title">-->
+<!--            <h4 class="m-sol__result-title" id="reactive-result-title">결과</h4>-->
+<!--            <p class="m-sol__result-context">50ms 대기 API, 250 VU, 모델별 3회 측정 집계</p>-->
+<!--            <ul class="m-sol__result-list">-->
+<!--              <li>-->
+<!--                <strong>처리량 23.3% 높게 측정</strong>-->
+<!--                <p><span class="m-sol__result-value">MVC 3,406.1 req/s</span> 대비 <span class="m-sol__result-value">WebFlux 4,201.2 req/s</span></p>-->
+<!--              </li>-->
+<!--              <li>-->
+<!--                <strong>p95 응답시간 36.9% 낮게 측정</strong>-->
+<!--                <p><span class="m-sol__result-value">MVC 108.63ms</span> 대비 <span class="m-sol__result-value">WebFlux 68.50ms</span></p>-->
+<!--              </li>-->
+<!--              <li>-->
+<!--                <strong>프로세스 최대 스레드 수</strong>-->
+<!--                <p><span class="m-sol__result-value">MVC 234개</span>, <span class="m-sol__result-value">WebFlux 48개</span></p>-->
+<!--              </li>-->
+<!--            </ul>-->
+<!--            <p class="m-sol__result-decision">요청당 CPU 사용량은 WebFlux가 더 높았지만, 동시 요청 처리량과 응답시간을 우선해 WebFlux와 R2DBC를 적용했습니다.</p>-->
+<!--            <p class="m-sol__result-note">비교 API의 측정 결과이며, 전체 플랫폼의 문자 발송 처리량과는 구분합니다.</p>-->
+<!--          </section>-->
+
+<!--          <div class="m-sol__block">-->
+<!--            <div class="m-sol__head">-->
+<!--              <span class="m-sol__step">STEP 05</span>-->
+<!--              <h4 class="m-sol__block-title">결론</h4>-->
+<!--            </div>-->
+<!--            <p class="m-sol__block-desc">갈린 것은 처리 속도가 아니라 <strong>한계 지점</strong>이었습니다. 3회 반복한 250 VU 조건에서 WebFlux는 처리량이 23.3% 높고 p95는 36.9% 낮았으며, peak 스레드는 234개에서 48개로 줄었습니다. MVC는 worker가 전부 대기에 묶이면서 약 3,400 TPS에서 평탄해진 반면 WebFlux는 같은 장비에서 계속 올라갔습니다.-->
+
+<!--부하를 더 키운 구간에서도 방향은 같았습니다. 500 VU에서 처리량 격차는 50ms 대기 조건에서 +145.3%, 100ms 대기 조건에서 +146.1%로 거의 동일하게 나타났습니다. 실제 Redis와 MariaDB를 붙여 1,500 TPS를 고정한 환경에서도 스레드 27개와 힙 449MiB로 같은 처리량을 냈습니다.-->
+
+<!--대가는 CPU입니다. 요청당 실제 연산이 50ms 대기뿐이었던 합성 테스트에서 WebFlux의 요청당 CPU는 0.123에서 0.168 core-ms로 36.7% 높았습니다. Reactive Pipeline 처리 비용이 실재한다는 뜻입니다. 반대로 Redis와 DB 조회가 붙은 실환경에서는 스레드 관리 비용이 더 커서 WebFlux 쪽 CPU가 낮았습니다. 이 교환이 이득인지는 무엇이 먼저 고갈되느냐로 갈립니다. 접수 API는 Redis 조회, DB 조회, 중계사 API 호출이 이어지는 I/O 체인이고 동시 접수가 수천 건 단위로 들어옵니다. CPU는 남는데 스레드가 먼저 바닥나는 구조였고, 온프레미스라 장비를 늘려 해결할 수도 없었습니다. 그래서 CPU를 더 주고 스레드를 샀습니다.-->
+
+<!--반대 조건이었다면 답도 반대입니다. 동시성이 낮거나 병목이 계산이면 Reactive Pipeline 비용만 더해지고, 체인에 Blocking 호출이 하나만 섞여도 그 지점에서 이벤트 루프가 묶여 이점이 사라집니다.</p>-->
+<!--            <p class="m-sol__block-desc">그래서 적용은 <strong>체인 전체를 Non-Blocking으로 맞추는 것</strong>을 기준으로 삼았습니다. 요청을 받는 구간은 Spring WebFlux로 구성했고, DB 접근은 JDBC 대신 <strong>R2DBC</strong>로 바꿔 조회가 스레드를 잡지 않도록 했습니다. 서비스 간 통신은 <strong>RabbitMQ</strong>로 비동기화해, 접수 응답과 실제 발송 처리를 분리했습니다. 접수는 메시지를 큐에 넣는 시점에 끝나므로 뒤쪽 처리 속도가 접수 응답 시간을 끌지 않습니다.-->
+
+<!--셋 중 하나라도 Blocking으로 남으면 그 지점에서 이벤트 루프가 묶여 앞의 측정치가 그대로 무너집니다. 남은 문제였던 끊긴 스택 트레이스는 Context API로 요청 추적 정보를 이어 붙이는 공통 함수를 만들어 보완했습니다.</p>-->
+
+
+<!--          </div>-->
+
+        </div>
+      </article>
+
+      <article class="m-sol__item ng-cicd" aria-labelledby="cicd-title">
+        <div class="ng-solution-heading">
+          <p class="m-sol__num" aria-hidden="true">03</p>
+          <h3 class="m-sol__sub" id="cicd-title">배포 과정을 표준화하기 위한 CI/CD 파이프라인 구축</h3>
+        </div>
+        <div class="m-sol__body">
+          <div class="ng-solution-sections" role="group" aria-labelledby="cicd-title">
+            <details class="m-sol__block ng-disclosure" id="cicd-background">
+              <summary class="m-sol__head">
+                <h4 class="m-sol__block-title">기존 배포 방식의 문제점</h4>
+                <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+              </summary>
+              <div class="ng-disclosure__content">
+                <ul class="m-sol__block-desc ng-dev-list">
+                  <li><strong>변경 이력 추적의 어려움:</strong> 소스와 빌드 파일이 개인 PC, SVN, 물리 서버에 흩어져 있어 운영 바이너리의 소스와 변경 이력 확인이 어려움</li>
+                  <li><strong>수동 배포:</strong> 개발자가 로컬 또는 개발 서버에서 빌드한 뒤, 배포 서버에 직접 접속해 파일 업로드</li>
+                  <li><strong>새벽 배포 제약:</strong> 모놀리식 서버 재기동 중 발송과 고객사 연결이 약 1분간 중단돼, 새벽에만 배포 가능</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="m-sol__block ng-disclosure" id="cicd-automation">
+              <summary class="m-sol__head">
+                <h4 class="m-sol__block-title">형상관리와 CI/CD 자동화</h4>
+                <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+              </summary>
+              <div class="ng-disclosure__content">
+                <h5 class="ng-sub" id="cicd-vcs">브랜치 전략</h5>
+                <p class="m-sol__block-desc">운영 버전의 소스와 변경 이력을 추적할 수 있도록, 차세대 프로젝트는 GitHub에서 소스를 관리하고 배포 버전에 릴리스 태그를 남겼습니다.</p>
+                <table class="m-table ng-cicd-branches" aria-labelledby="cicd-vcs">
+                  <thead>
+                    <tr><th scope="col">브랜치</th><th scope="col">용도</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th scope="row"><code><span>feature</span><wbr><span>#번호</span></code></th><td>신규 기능 개발</td></tr>
+                    <tr><th scope="row"><code><span>hotfix</span><wbr><span>#이슈번호</span></code></th><td>긴급 수정</td></tr>
+                    <tr><th scope="row"><code>develop</code></th><td>개발 서버 확인</td></tr>
+                    <tr><th scope="row"><code>staging</code></th><td>운영 반영 전 검증</td></tr>
+                    <tr><th scope="row"><code>main</code></th><td>운영 서버 배포</td></tr>
+                  </tbody>
+                </table>
+
+                <h5 class="ng-sub">GitHub Actions 적용</h5>
+                <div class="ng-cicd-intro-copy">
+                  <p class="m-sol__block-desc">수동 업로드와 재기동을 자동화하기 위해, 저장소의 workflow 파일로 빌드부터 배포까지 관리할 수 있는 GitHub Actions를 선택했습니다.</p>
+                  <p class="m-sol__block-desc">폐쇄망의 온프레미스 서버에 접근할 수 있도록 <strong>사내망에 self-hosted runner 1대를 구성</strong>했습니다. 개발, 사전 검증, 운영 환경은 배포 대상만 달리하고, 배포 브랜치에 push하면 같은 절차가 실행되도록 했습니다.</p>
+                </div>
+
+                <div class="ng-cicd-flow">
+                  <figure class="m-sol__figure ng-cicd-figure">
+                    <figcaption class="m-fig-label">사내망 CI/CD 구성도</figcaption>
+                    <div class="m-fig">
+                      <img src="../../assets/img/project/nextgen-messaging-platform/CI_CD.png" data-zoom alt="GitHub push로 GitHub Actions가 실행되고, 사내망의 self-hosted runner가 빌드와 테스트 후 SSH와 SCP로 서버에 배포하는 구성" width="4024" height="5000" loading="lazy" decoding="async">
+                    </div>
+                  </figure>
+                <h5 class="ng-sub">배포 단계와 실패 대응</h5>
+                <ol class="m-sol__block-desc ng-cicd-workflow">
+                  <li>
+                    <p><strong>빌드와 테스트</strong></p>
+                    <p>Runner에서 빌드한 뒤, 각 서비스 저장소의 JUnit 테스트로 API 요청과 응답, 예외 처리, RabbitMQ payload 규격 검증. API 18건과 RabbitMQ payload 12건으로 총 30건이며, <strong>실패 시 서버 반영 전에 배포 중단.</strong></p>
+                  </li>
+                  <li>
+                    <p><strong>배포 대상 조회</strong></p>
+                    <p>서버 추가와 IP 변경 때마다 workflow를 수정하지 않도록 Admin Server에서 대상 IP 조회. 아직 Eureka에 등록되지 않은 신규 서버도 배포해야 하므로, 운영팀이 관리하는 서버 정보를 기준으로 선정.</p>
+                  </li>
+                  <li>
+                    <p><strong>파일 전송과 새 버전 기동</strong></p>
+                    <p>SSH/SCP로 jar를 전송한 뒤, 기존 프로세스를 graceful 종료하고 새 버전 기동.</p>
+                  </li>
+                  <li>
+                    <p><strong>정상 기동 확인</strong></p>
+                    <p>서버의 shell script로 프로세스를 확인한 뒤, 아래 API 호출.</p>
+                    <p class="ng-cicd-health"><code>/actuator/health/<wbr>liveness</code><code>/actuator/health/<wbr>readiness</code></p>
+                    <p>상태 확인을 통과한 경우에만 다음 인스턴스로 진행. <strong>실패 시 다음 인스턴스 배포 중단.</strong></p>
+                  </li>
+                </ol>
+                <p class="ng-cicd-note">배포 성공과 실패 결과, 상태 확인 실패 시점의 로그는 Slack으로 전송.</p>
+                </div>
+
+                <h5 class="ng-sub">배포 방식과 복구 기준</h5>
+                <dl class="m-sol__block-desc ng-cicd-policy">
+                  <div>
+                    <dt>일반 업데이트</dt>
+                    <dd>다른 인스턴스가 요청을 처리하는 동안 한 대씩 교체하는 롤링 배포로 진행. 종료 시 Eureka Client 등록이 해제되도록 Spring Cloud를 설정해 라우팅 대상에서 제외.</dd>
+                  </div>
+                  <div>
+                    <dt>서비스 변경</dt>
+                    <dd>데이터 처리 방식이나 서비스 동작이 바뀌는 작업은 서비스가 활동하지 않는 새벽 시간에 대상 서버를 내린 뒤 반영.</dd>
+                  </div>
+                  <div>
+                    <dt>이전 버전 복구</dt>
+                    <dd>담당자가 별도 rollback workflow에 릴리스 태그를 입력해 실행하면 해당 버전으로 다시 기동.</dd>
+                  </div>
+                </dl>
+              </div>
+            </details>
+
+            <details class="m-sol__block ng-disclosure" id="cicd-result" data-independent open>
+              <summary class="m-sol__head">
+                <h4 class="m-sol__block-title">결과</h4>
+                <i class="ng-disclosure__chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+              </summary>
+              <div class="ng-disclosure__content">
+              <dl class="m-sol__block-desc ng-cicd-results">
+                <div>
+                  <dt>수동 업로드와 재기동 작업 자동화</dt>
+                  <dd>서버에 직접 접속해 파일을 올리고 재기동하던 작업 없이, 배포 브랜치에 push하면 팀 공통 workflow로 서버 반영까지 진행합니다.</dd>
+                </div>
+                <div>
+                  <dt>운영 버전의 소스와 배포 이력 추적</dt>
+                  <dd>차세대에서는 GitHub의 소스 변경 내역과 릴리스 태그, workflow 실행 기록으로 운영에 반영한 버전과 변경 사항을 확인할 수 있게 됐습니다.</dd>
+                </div>
+                <div>
+                  <dt>일반 업데이트의 새벽 배포 제약 해소</dt>
+                  <dd>서비스 동작이나 데이터 처리 방식이 바뀌는 작업을 제외한 일반 업데이트는, 새벽까지 기다리지 않고 운영 중 반영할 수 있게 됐습니다.</dd>
+                </div>
+              </dl>
+              </div>
+            </details>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  </div>
+</main>
+
+<!-- IMAGE LIGHTBOX -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="이미지 크게 보기">
+  <div class="lightbox__backdrop" data-lb-close></div>
+  <button class="lightbox__close" data-lb-close aria-label="닫기">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M6 6L18 18M18 6L6 18" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <img id="lightboxImg" src="" alt="" loading="lazy" decoding="async">
+</div>
+
+<script src="../../script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const solutions = document.querySelector('.ng-solutions');
+  if (solutions && window.lucide) {
+    window.lucide.createIcons({ attrs: { width: 20, height: 20 } });
+    solutions.classList.add('ng-icons-ready');
+  }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const panels = Array.from(document.querySelectorAll('details.ng-disclosure'));
+  if (!panels.length) return;
+
+  const solutions = document.querySelector('.ng-solutions');
+  const EASING = 'cubic-bezier(.4,0,.2,1)';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const states = panels.map(panel => ({
+    panel,
+    head: panel.querySelector('summary'),
+    body: panel.querySelector('.ng-disclosure__content'),
+    independent: panel.hasAttribute('data-independent'),
+    animation: null,
+    targetOpen: panel.open,
+    endHeight: 0
+  }));
+  const target = state => state.animation ? state.targetOpen : state.panel.open;
+  const animating = () => states.some(state => state.animation);
+  let anchorHead = null;
+  let anchorTop = 0;
+  let anchorFrame = null;
+
+  function stopAnchor() {
+    if (anchorFrame !== null) cancelAnimationFrame(anchorFrame);
+    anchorFrame = null;
+    anchorHead = null;
+    if (!animating()) solutions.removeAttribute('data-animating');
+  }
+
+  // Use one scroll anchor, without competing with native scroll anchoring.
+  function followAnchor() {
+    anchorFrame = null;
+    if (!anchorHead) return;
+    const shift = anchorHead.getBoundingClientRect().top - anchorTop;
+    if (Math.abs(shift) > 0.5) {
+      window.scrollBy({ top: shift, left: 0, behavior: 'instant' });
+    }
+    if (animating()) anchorFrame = requestAnimationFrame(followAnchor);
+    else {
+      stopAnchor();
+      solutions.removeAttribute('data-animating');
+    }
+  }
+
+  function anchor(head) {
+    stopAnchor();
+    anchorHead = head;
+    anchorTop = head.getBoundingClientRect().top;
+    solutions.setAttribute('data-animating', '');
+    anchorFrame = requestAnimationFrame(followAnchor);
+  }
+
+  function height(state, opening) {
+    const style = getComputedStyle(state.panel);
+    const edges = ['borderTopWidth', 'borderBottomWidth', 'paddingTop', 'paddingBottom']
+      .reduce((sum, property) => sum + (parseFloat(style[property]) || 0), 0);
+    return state.head.getBoundingClientRect().height + edges +
+      (opening ? state.body.getBoundingClientRect().height : 0);
+  }
+
+  function settle(state) {
+    const animation = state.animation;
+    state.animation = null;
+    state.panel.open = state.targetOpen;
+    state.panel.removeAttribute('data-closing');
+    state.panel.removeAttribute('data-animating');
+    if (animation) {
+      animation.onfinish = null;
+      animation.cancel();
+    }
+    if (!animating() && !anchorHead) solutions.removeAttribute('data-animating');
+  }
+
+  function slide(state, opening) {
+    // Capture the rendered height before cancelling, including interrupted motion.
+    const from = state.panel.getBoundingClientRect().height;
+    if (state.animation) {
+      state.animation.onfinish = null;
+      state.animation.cancel();
+      state.animation = null;
+    }
+    state.targetOpen = opening;
+    if (!state.body || reduce.matches || document.hidden || !state.panel.animate) {
+      settle(state);
+      return;
+    }
+
+    state.panel.open = true;
+    state.panel.toggleAttribute('data-closing', !opening);
+    state.endHeight = height(state, opening);
+    const distance = Math.abs(state.endHeight - from);
+    if (distance < 0.5) {
+      settle(state);
+      return;
+    }
+
+    state.panel.setAttribute('data-animating', '');
+    const animation = state.panel.animate(
+      [{ height: from + 'px' }, { height: state.endHeight + 'px' }],
+      { duration: Math.min(440, 280 + Math.sqrt(distance) * 3), easing: EASING, fill: 'both' }
+    );
+    state.animation = animation;
+    animation.onfinish = () => {
+      if (state.animation === animation) settle(state);
+    };
+  }
+
+  if (window.ResizeObserver) {
+    const observed = new Map();
+    const resize = new ResizeObserver(entries => {
+      const changed = new Set(entries.map(entry => observed.get(entry.target)));
+      changed.forEach(state => {
+        if (state.animation && state.targetOpen && Math.abs(height(state, true) - state.endHeight) > 1) {
+          slide(state, true);
+        }
+      });
+    });
+    states.forEach(state => {
+      [state.head, state.body].filter(Boolean).forEach(element => {
+        observed.set(element, state);
+        resize.observe(element);
+      });
+    });
+  }
+
+  states.forEach(state => {
+    if (!state.head) return;
+    state.head.addEventListener('click', event => {
+      event.preventDefault();
+      const opening = !target(state);
+      anchor(state.head);
+      if (opening && !state.independent) {
+        states.forEach(other => {
+          if (other !== state && !other.independent && target(other)) slide(other, false);
+        });
+      }
+      slide(state, opening);
+    });
+  });
+
+  window.addEventListener('wheel', stopAnchor, { passive: true });
+  window.addEventListener('touchmove', stopAnchor, { passive: true });
+  window.addEventListener('keydown', event => {
+    if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(event.key)) stopAnchor();
+  });
+  reduce.addEventListener('change', () => {
+    if (reduce.matches) states.forEach(state => { if (state.animation) settle(state); });
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) return;
+    stopAnchor();
+    states.forEach(state => { if (state.animation) settle(state); });
+  });
+});
+</script>
+</body>
+</html>

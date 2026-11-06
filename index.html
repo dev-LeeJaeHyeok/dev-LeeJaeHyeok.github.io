@@ -47,18 +47,19 @@
 
   <!-- HERO -->
   <section class="hero" id="top">
-    <div class="hero__stage">
-      <img class="hero__bg" src="assets/img/hero-back.jpg" alt="" fetchpriority="high">
-      <div class="wrap hero__inner">
-        <p class="eyebrow">BACKEND ENGINEER</p>
-        <h1 class="hero__title">Hello World<span class="accent"> !</span></h1>
-        <p class="hero__sub">안녕하세요, 이재혁입니다.</p>
-        <p class="hero__desc">
-          서울에서 4년 차 백엔드 엔지니어로 일하고 있습니다. 탄탄한 개발과 환경 개선을 좋아하며,
-          개발자의 가치는 비즈니스 가치를 구현하는 데서 나온다고 믿습니다.
-          주도적으로 업무를 진행할 수 있는 환경을 선호합니다.
-        </p>
+    <div class="wrap hero__grid">
+      <figure class="hero__photo">
+        <img src="assets/img/profile.png" alt="이재혁 프로필 사진" width="800" height="800" fetchpriority="high">
+      </figure>
+      <div class="hero__head">
+        <h1 class="hero__hello">Hello World<span class="accent"> !</span></h1>
+        <p class="hero__greet">안녕하세요, 이재혁입니다.</p>
       </div>
+      <p class="hero__desc">
+        서울에서 4년 차 백엔드 엔지니어로 일하고 있습니다. 탄탄한 개발과 환경 개선을 좋아하며,
+        개발자의 가치는 비즈니스 가치를 구현하는 데서 나온다고 믿습니다.
+        주도적으로 업무를 진행할 수 있는 환경을 선호합니다.
+      </p>
     </div>
 
     <!-- WHAT I DO — Intro에 통합 -->
@@ -122,11 +123,11 @@
   <section class="section" id="work">
     <div class="wrap">
       <div class="section__head">
-        <h2 class="section__title">Selected Work</h2>
+        <h2 class="section__title">Work experience</h2>
         <p class="section__count">01 — 03</p>
       </div>
 
-      <article class="proj proj--lead" data-modal="proj1" tabindex="0" role="button" aria-label="차세대 통합 메시징 플랫폼 상세 보기">
+      <article class="proj proj--lead">
         <p class="proj__num">01</p>
         <div class="proj__body">
           <div class="proj__head">
@@ -151,13 +152,13 @@
               </ul>
             </div>
           </div>
-          <p class="proj__more">자세히 보기 <span aria-hidden="true">→</span></p>
+          <a class="proj__more" href="projects/nextgen-messaging/">자세히 보기 <span aria-hidden="true">→</span></a>
         </div>
       </article>
 
       <div class="proj__rule"></div>
 
-      <article class="proj" data-modal="proj2" tabindex="0" role="button" aria-label="농협정보시스템 RCS 전송 서버 상세 보기">
+      <article class="proj">
         <p class="proj__num">02</p>
         <div class="proj__body">
           <div class="proj__head">
@@ -167,7 +168,7 @@
           <p class="proj__role">서버 개발 · 프로토콜 구현</p>
           <div class="proj__content">
             <div class="proj__thumb">
-              <img src="assets/img/project-2.jpg" alt="" loading="lazy"
+              <img src="assets/img/project/NH/thumbnail/project-2.png" alt="" loading="lazy"
                    onerror="this.style.display='none';this.parentNode.classList.add('is-empty')">
             </div>
             <div>
@@ -182,40 +183,40 @@
               </ul>
             </div>
           </div>
-          <p class="proj__more">자세히 보기 <span aria-hidden="true">→</span></p>
+          <a class="proj__more" href="projects/nh-rcs-server/">자세히 보기 <span aria-hidden="true">→</span></a>
         </div>
       </article>
 
       <div class="proj__rule"></div>
 
-      <article class="proj" data-modal="proj3" tabindex="0" role="button" aria-label="레거시 문자 플랫폼 개발·운영 상세 보기">
-        <p class="proj__num">03</p>
-        <div class="proj__body">
-          <div class="proj__head">
-            <h3 class="proj__title">레거시 문자 플랫폼 개발·운영</h3>
-            <span class="proj__date">2021.10 — 2023.09</span>
-          </div>
-          <p class="proj__role">유지보수 · 백오피스 개발</p>
-          <div class="proj__content">
-            <div class="proj__thumb">
-              <img src="assets/img/project-3.jpg" alt="" loading="lazy"
-                   onerror="this.style.display='none';this.parentNode.classList.add('is-empty')">
-            </div>
-            <div>
-              <p class="proj__desc">온프레미스 레거시 플랫폼을 운영하면서, 운영팀의 반복 업무를 줄이는 PDF 데이터 추출기와 Excel 문서 빌더를 직접 제작해 프로세스를 개선했습니다.</p>
-              <div class="stats">
-                <div class="stat"><p class="stat__num">100+</p><p class="stat__cap">월 PDF<br>수작업 자동화</p></div>
-                <div class="stat"><p class="stat__num">2종</p><p class="stat__cap">사내 도구<br>자체 제작</p></div>
-                <div class="stat"><p class="stat__num">C→Java</p><p class="stat__cap">수신 서버<br>리모델링</p></div>
-              </div>
-              <ul class="tags">
-                <li>Java 8/11</li><li>Spring Boot</li><li>Apache POI</li><li>PDFBox</li><li>MySQL</li>
-              </ul>
-            </div>
-          </div>
-          <p class="proj__more">자세히 보기 <span aria-hidden="true">→</span></p>
-        </div>
-      </article>
+<!--      <article class="proj">-->
+<!--        <p class="proj__num">03</p>-->
+<!--        <div class="proj__body">-->
+<!--          <div class="proj__head">-->
+<!--            <h3 class="proj__title">레거시 문자 플랫폼 개발·운영</h3>-->
+<!--            <span class="proj__date">2021.10 — 2023.09</span>-->
+<!--          </div>-->
+<!--          <p class="proj__role">유지보수 · 백오피스 개발</p>-->
+<!--          <div class="proj__content">-->
+<!--            <div class="proj__thumb">-->
+<!--              <img src="assets/img/project-3.jpg" alt="" loading="lazy"-->
+<!--                   onerror="this.style.display='none';this.parentNode.classList.add('is-empty')">-->
+<!--            </div>-->
+<!--            <div>-->
+<!--              <p class="proj__desc">온프레미스 레거시 플랫폼을 운영하면서, 운영팀의 반복 업무를 줄이는 PDF 데이터 추출기와 Excel 문서 빌더를 직접 제작해 프로세스를 개선했습니다.</p>-->
+<!--              <div class="stats">-->
+<!--                <div class="stat"><p class="stat__num">100+</p><p class="stat__cap">월 PDF<br>수작업 자동화</p></div>-->
+<!--                <div class="stat"><p class="stat__num">2종</p><p class="stat__cap">사내 도구<br>자체 제작</p></div>-->
+<!--                <div class="stat"><p class="stat__num">C→Java</p><p class="stat__cap">수신 서버<br>리모델링</p></div>-->
+<!--              </div>-->
+<!--              <ul class="tags">-->
+<!--                <li>Java 8/11</li><li>Spring Boot</li><li>Apache POI</li><li>PDFBox</li><li>MySQL</li>-->
+<!--              </ul>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <a class="proj__more" href="projects/legacy-messaging/">자세히 보기 <span aria-hidden="true">→</span></a>-->
+<!--        </div>-->
+<!--      </article>-->
     </div>
   </section>
 
@@ -332,441 +333,6 @@
   </div>
 </div>
 
-<!-- 프로젝트 상세 본문 — 여기를 직접 고치면 된다 -->
-<template id="tpl-proj1">
-  <div class="m-head">
-    <p class="m-eyebrow">CASE STUDY 01</p>
-    <h2 class="m-title">차세대 통합 메시징 플랫폼</h2>
-    <dl class="m-meta">
-      <dt>기간</dt><dd>2023.04 — 2025.06</dd>
-      <dt>역할</dt><dd>5인 개발팀 PL · 아키텍처 설계 · 개발 리드 · 성능/장애 검증 · 운영 전환</dd>
-      <dt>기술</dt><dd>Java 17 · Spring Boot 3.x · WebFlux · Spring Cloud · R2DBC · MariaDB · Redis · RabbitMQ</dd>
-    </dl>
-  </div>
-
-  <section class="m-sec">
-    <p class="m-sec__label"><img class="ico ico--lg" src="assets/img/icon/overview_icon.png" alt="" aria-hidden="true">개요</p>
-      <p class="m-summary">고객사별 Agent와 서비스별 레거시 Gateway에 분산돼 있던 메시지 처리 구조를, 하나의 REST API로 SMS·MMS/LMS·알림톡·RCS를 이용하도록 재설계한 플랫폼 통합 프로젝트입니다.</p>
-
-    <p class="m-sec__label">AS-IS · 기존 구조</p>
-      <div class="m-fig">
-        <img src="assets/img/project/nextgen-messaging-platform/arch-legacy.png" data-zoom alt="">
-      </div>
-      <p class="m-cap">해당 서비스는 고객사측 DB에 저장된 row를 polling 방식으로 읽어 서버로 전송한 뒤, 최종적으로 이통망 측에 전달하여 휴대폰 단말기에 문자를 전송하는 서비스입니다. 하지만 운영과 유지보수 측면에서 문제들을 마주하게됩니다.</p>
-  </section>
-
-  <section class="m-sec">
-    <p class="m-sec__label"><img class="ico ico--lg" src="assets/img/icon/question_mark.png" alt="" aria-hidden="true">무엇이 문제였나</p>
-    <div class="m-list">
-      <div>
-        <h4>기술 스택의 파편화</h4>
-        <p>언어, 프레임워크, 배포, 장애 대응이 서비스마다 달라, 공통 기능 하나를 추가해도 서비스별로 따로 분석, 개발, 검증해야 했으며, 각 서비스에 기능에는 필요한 서버가 제각각이어서 증설 시 IDC에 다수의 서버가 투입되어야했습니다.</p>
-      </div>
-      <div>
-        <h4>과도한 운영 리소스 비용</h4>
-        <p>회사에서는 고객들에게 보다 쉽고 편리하게 서비스를 제공하기위해 Agent를 제공했지만, 고객사마다 환경이 다르고 그에따라 Agent 커스터마이징이 요구되었으며, 엔지니어가 없는 고객사가 증가함에따라 원격 및 현장지원하는 업무가 많아졌고, 고객사당 설치된 N개의 Agent를 운영인력이 전부 관리하기에는 비효율적이었습니다.</p>
-      </div>
-      <div>
-        <h4>연동 구조의 문제</h4>
-        <p>고객사 클라이언트가 TCP/IP로 특정 서버에 직접 연결되는 구조였습니다. 서버를 증설하거나 이관하려면 고객사마다 일정을 잡고 클라이언트 설정을 바꿔야 했고, 세션이 모놀리식 서버에 묶여 있어 해당 서버 작업 시 연결되어져 있는 고객사한테 안내 및 조치를 해야하는 상황이었습니다.</p>
-      </div>
-      <div>
-        <h4>간편한 외부 인터페이스의 부재</h4>
-        <p>기존 Agent가 서버와 소통하는 방식으로 API를 지원했지만, 다소 난이도가 있기에 수요가 없던 상황이었습니다. 하지만 해당 서비스 시장의 경쟁력중 하나인 간편한 외부 인터페이스를 통한 고객의 접근성을 확보하는게 목표였고 이 목표를 기반으로 기존에 있던 레거시의 문제점을 보완한 새로운 플랫폼을 설계하게됩니다.</p>
-      </div>
-    </div>
-  </section>
-
-<!--    <section class="m-sec">-->
-<!--        <p class="m-sec__label is-accent">TO-BE · 개선 구조</p>-->
-<!--        <div class="m-fig">-->
-<!--            <img src="assets/img/project/nextgen-messaging-platform/arch-nextgen.png" data-zoom alt="">-->
-<!--        </div>-->
-<!--        <p class="m-cap">기술 스택을 통합하고, 서비스 요청 입구를 하나의 도메인으로 묶어 각각의 엔드포인트로 서비스를 호출하는 마이크로서비스 아키텍처입니다.</p>-->
-<!--    </section>-->
-
-  <section class="m-sec">
-    <p class="m-sec__label"><img class="ico ico--lg" src="assets/img/icon/solution_mark.png" alt="" aria-hidden="true">해결 과정</p>
-    <div class="m-sol">
-      <article class="m-sol__item">
-        <p class="m-sol__num" aria-hidden="true">01</p>
-        <div class="m-sol__body">
-          <p class="m-sol__sub">시스템 통합과 마이크로서비스 아키텍처로 전환</p>
-            <p class="m-sol__block-desc">문자 전송 서비스를 제공하기위해서는 생각보다 많은 절차가 들어갑니다.
-                광고 문자에 대해 수신자를 검증하거나 광고 문자 규격에 맞는지 전문을 검토하는 과정, 고객 데이터와 문자 유형에따라 어떤 외부망 경로로 나가는지 결정짓는 라우팅, KISA에서 제공하는 다양한 형태의 스팸 문구인 비정형 데이터를 수집하여 전문 검증시 수천개의 데이터를 본문에서 검출해야합니다.
-                이 밖에도 비즈니스 문제를 해결하기위한 다양한 절차가 있으며, 이 절차들은 서버를 나누는 기준이되어 변경사항이 발생할 때 해당 범위만 수정되면서 서비스에는 지장이 없도록 하기위해 Spring 생태계에서도 강력한 도구인 Spring Cloud를 이용한 MSA를 선택하게됩니다.
-
-            </p>
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <span class="m-sol__step">STEP 01</span>
-              <h4 class="m-sol__block-title">기능 통합과 분리</h4>
-            </div>
-            <p class="m-sol__block-desc">우선 MSA를 위해 기존 레거시에서 공통 기능이지만 각기 다른 환경에서 제각각 개발되던 기능들을 분석하여 서비스를 정의하여 어떤 기능, 어떤 책임을 갖고있는 서버가 필요한지 정의하는 단계를 수행합니다. </p>
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/solution_1_1.png" data-zoom alt=""></div>
-          </div>
-
-            <!-- 여기에 RabbitMQ 내용도 넣자 -->
-
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-                <span class="m-sol__step">STEP 02</span>
-                <h4 class="m-sol__block-title-mt">Spring Cloud 적용기</h4>
-            </div>
-                <div class="m-sol__row m-sol__row--split-sm">
-                <p class="m-sol__block-desc">
-                    Spring Cloud는 Service Discovery 기능을 제공합니다.
-
-                    [Step 1]에서 분류된 각 서비스 인스턴스들은 Eureka Client로써 기동할 때 자신의 위치와 정보를 Spring Cloud의 핵심 서버인 Eureka Server에 등록합니다.
-                    이에따라 Eureka Server는 플랫폼 내부의 서비스 인스턴스들의 정보를 관리할 수 있게됩니다.</p>
-                    <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/solution_1_2.png" data-zoom alt=""></div>
-                </div>
-                <div class="m-sol__row m-sol__row--split-sm">
-                    <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/solution_1_3.png" data-zoom alt=""></div>
-                    <p class="m-sol__block-desc">
-                        이 메커니즘을 기반으로 Spring Cloud API Gateway에서는 Eureka Server로부터 해당 정보를 가져와서 Spring Cloud Loadbalancer를 통해 요청을 분산하여 각각의 서비스에 맞게 분산되고, 이를 통해서 본 플랫폼은 레거시때와는 다르게 클라이언트에 영향없이 무중단으로 Scale-Out이 가능하게됩니다.
-                        그 밖에도 Spring Cloud의 Config Server를 통해서 수 많은 서비스 인스턴스들의 공통 설정 파일들을 중앙관리화할 수 있습니다.
-                    </p>
-                </div>
-          </div>
-        </div>
-      </article>
-
-<!--            <p class="m-sol__block-desc">-->
-
-
-<!--이 메커니즘을 기반으로 Spring Cloud API Gateway에서는 Eureka Server로부터 해당 정보를 가져와서 Spring Cloud Loadbalancer를 통해 요청을 분산하여 각각의 서비스에 맞게 분산되고, 이를 통해서 본 플랫폼은 레거시때와는 다르게 클라이언트에 영향없이 무중단으로 Scale-Out이 가능하게됩니다. -->
-<!-- 그 밖에도 Config Server를 통해서 수 많은 서비스 인스턴스들의 공통 설정 파일들을 중앙관리화할 수 있습니다.</p>-->
-<!--            <div class="m-sol__head">-->
-<!--              <h4 class="m-sol__block-title">Spring Cloud API Gateway</h4>-->
-<!--            </div>-->
-<!--            <p class="m-sol__block-desc">플랫폼의 가장 중요한 서버중 하나인 API Gateway는 클라이언트의 요청을 처음으로 받아 요청에 맞는 내부 서비스로 전달하는 서버입니다. </p>-->
-<!--          </div>-->
-<!--          <div class="m-sol__block">-->
-<!--            <div class="m-sol__head">-->
-<!--              <span class="m-sol__step">STEP 02</span>-->
-<!--              <h4 class="m-sol__block-title"></h4>-->
-<!--            </div>-->
-
-<!--            <p class="m-sol__block-desc">-->
-
-
-
-<!--Spring Cloud는 Service Discovery 기능을 제공합니다.-->
-
-<!--[Step 1]에서 분류된 각 서비스 인스턴스들은 Eureka Client로써 기동할 때 자신의 위치와 정보를 Spring Cloud의 핵심 서버인 Eureka Server에 등록합니다. -->
-<!--이에따라 Eureka Server는 플랫폼 내부의 서비스 인스턴스들의 정보를 관리할 수 있게됩니다.</p>-->
-<!--            <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/solution_1_2.png" data-zoom alt=""></div>-->
-<!--            <p class="m-sol__block-desc">-->
-
-
-<!--이 메커니즘을 기반으로 Spring Cloud API Gateway에서는 Eureka Server로부터 해당 정보를 가져와서 Spring Cloud Loadbalancer를 통해 요청을 분산하여 각각의 서비스에 맞게 분산되고, 이를 통해서 본 플랫폼은 레거시때와는 다르게 클라이언트에 영향없이 무중단으로 Scale-Out이 가능하게됩니다. -->
-<!-- 그 밖에도 Config Server를 통해서 수 많은 서비스 인스턴스들의 공통 설정 파일들을 중앙관리화할 수 있습니다.</p>-->
-<!--            <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/solution_1_3.png" data-zoom alt=""></div>-->
-<!--            <div class="m-sol__head">-->
-<!--              <h4 class="m-sol__block-title">Spring Cloud API Gateway</h4>-->
-<!--            </div>-->
-<!--            <p class="m-sol__block-desc">플랫폼의 가장 중요한 서버중 하나인 API Gateway는 클라이언트의 요청을 처음으로 받아 요청에 맞는 내부 서비스로 전달하는 서버입니다. </p>-->
-<!--          </div>-->
-<!--          <div class="m-sol__block">-->
-<!--            <div class="m-sol__head">-->
-<!--              <span class="m-sol__step">STEP 03</span>-->
-<!--              <h4 class="m-sol__block-title">Spring Cloud API Gateway</h4>-->
-<!--            </div>-->
-<!--            <p class="m-sol__block-desc">플랫폼의 가장 중요한 서버중 하나인 API Gateway는 클라이언트의 요청을 처음으로 받아 요청에 맞는 내부 서비스로 전달하는 서버입니다. </p>-->
-<!--          </div>-->
-<!--        </div>-->
-
-      <article class="m-sol__item">
-        <p class="m-sol__num" aria-hidden="true">02</p>
-        <div class="m-sol__body">
-          <p class="m-sol__sub">Reactive Non-Blocking Architecture 적용기</p>
-          <p class="m-summary">해당 서비스는 온프레미스 환경에서 운영되고 있어 트래픽 증가에 맞춰 서버를 즉시 확장하기 어려웠습니다. 장비 증설에는 IDC 랙 공간 확보부터 구매부터 설치까지 상당한 시간이 필요했기 때문에 가용한 서버 처리량을 항상 인지하고 확보해야되는 상황이었기에 한정된 하드웨어에서 얼마나 많은 트래픽을 안정적으로 처리할 수 있는지가 중요했습니다.
-
-              문자 전송 서비스는 외부 API, DB, Redis, RabbitMQ 등 I/O 작업이 많고 높은 동시성을 요구하는 구조였습니다. 이에 I/O 대기 중 Thread를 점유하지 않고 소수의 Thread로 많은 요청을 처리할 수 있는 Spring WebFlux의 Reactive Non-Blocking 모델이 이러한 환경에 적합하다고 판단했습니다.
-
-              다만 이론적인 장점만으로 기술을 선택하지 않고, 동일한 환경에서 MVC와 WebFlux의 처리량, 응답시간, Thread 사용량을 비교하는 성능 테스트를 진행했습니다.
-          </p>
-
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <span class="m-sol__step">STEP 01</span>
-              <h4 class="m-sol__block-title">테스트 목적</h4>
-            </div>
-            <p class="m-sol__block-desc">WebFlux가 실제로 이점을 주는지 검증하는 것을 목표로 비교 대상은 Spring MVC로 정했습니다.
-                정해진 하드웨어 스펙에서 높은 트래픽을 부하했을때 얼마나 안정적으로 요청을 처리할 수 있는지를 JVM과 하드웨어 관점에서 분석하는 것이 목표입니다.
-            </p>
-          </div>
-
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <span class="m-sol__step">STEP 02</span>
-              <h4 class="m-sol__block-title">테스트 환경</h4>
-            </div>
-            <p class="m-sol__block-desc">부하 테스트는 크게 두 가지로 나뉩니다.
-
-<strong>동시 사용자 수(VU) 방식</strong>은 가상 사용자 N명이 각자 요청을 보내고 응답을 받으면 다시 보내기를 반복합니다. 서버가 느려지면 초당 요청 수도 함께 줄어듭니다. 동시 사용자가 늘어날 때 처리량과 응답시간이 어떻게 변하는지 보기 위한 방식입니다.
-
-<strong>초당 요청 수(TPS) 방식</strong>은 서버의 응답 속도와 관계없이 정해진 요청률을 유지합니다. 서버가 느려져도 설정한 요청량을 계속 시도합니다. 목표한 트래픽을 안정적으로 처리하는지 보기 위한 방식입니다.</p>
-              <div class="m-sol__row m-sol">
-                  <div class="m-sol__row m-sol__row--split-sm">
-                      <img src="assets/img/project/nextgen-messaging-platform/test_logic.png" alt="테스트 그림">
-                      <table class="m-table">
-                          <tbody>
-                          <tr><td>로직</td><td>MVC는 <code>Thread.sleep()</code>, WebFlux는 <code>delayElement()</code> --> 50ms 고정<br></td></tr>
-                          <tr><td>JVM Options</td><td>Heap 512m, G1, ActiveProcessorCount=8</td></tr>
-                          <tr><td>하드웨어 스펙</td><td>4 core 8 thread</td></tr>
-                          <tr><td>부하</td><td>warm-up 10초 | 50 VU → 100 → 250 → 500 VU</td></tr>
-                          </tbody>
-                      </table>
-                  </div>
-                  <p class="m-sol__block-desc">각 모델의 처리 로직은 실제 Redis와 DB를 붙이면 응답 시간이 캐시 상태나 쿼리 플랜에 따라 매번 달라지기때문에 각 모델에 맞는 딜레이 함수를 사용하였습니다.</p>
-              </div>
-          </div>
-
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <span class="m-sol__step">STEP 03</span>
-              <h4 class="m-sol__block-title">동시 사용자 수 부하 테스트</h4>
-            </div>
-              <p class="m-sol__block-desc">우선, 동시 사용자 수를 50에서 100, 250, 500까지 단계적으로 올리고 정확한 측정을 위해서 warm-up을 거친 뒤 부하 테스트를 수행했습니다.</p>
-
-                  <div class="m-fig m-fig--md"><img src="assets/img/project/nextgen-messaging-platform/bench/raw-vu-csv.png" alt="구간별 원본 집계"></div>
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/bench/vu-tps.png" data-zoom alt="동시 사용자 수에 따른 TPS 변화"></div>
-
-            <p class="m-sol__block-desc">구간별 테스트 집계 사진입니다.
-                공식문서에 따르면 50 ~ 100 VU 구간에서는 오히려 Reactive Pipeline을 처리하는추가 비용으로 인해 Webflux 모델이 소폭 낮은 처리량을 보였지만, 동시 사용자가 증가하면서 MVC 모델의 Tomcat Worker Thread가 Thread.sleep() blocking에 의해 점유되면서 250 VU부터 요청량 증가로 인해 응답이 지연되는 반면에, WebFlux는 I/O 대기 중 Thread를 점유하지 않는 Non-blocking 방식으로 동일한 Thread를 다른 요청 처리에 활용할 수 있었고, 500 VU에서도 p95를 약 70ms 수준으로 유지하며 높은 TPS를 보입니다.
-            </p>
-
-<!--              <div class="m-sol__row m-sol__row&#45;&#45;split">-->
-                  <p class="m-fig-label">Spring MVC</p>
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/bench/jmc-mvc-threads.png" data-zoom alt="JMC에서 본 MVC 스레드 상태"></div>
-                  <p class="m-fig-label">Spring WebFlux</p>
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/bench/jmc-webflux-threads.png" data-zoom alt="JMC에서 본 WebFlux 스레드 상태"></div>
-<!--              </div>-->
-              <p class="m-sol__block-desc">실제로 각 모델의 스레드 상태를 JMC에서 확인해보면, 부하 구간에서 MVC는 <code>http-nio-*-exec-*</code> worker들이 대부분 runnable이 아닌 상태로 잡힙니다. 반면 WebFlux는 <code>reactor-http-nio</code> 이벤트 루프 스레드들이 runnable 상태를 유지합니다.</p>
-
-
-              <p class="m-sol__block-desc">또한 스레드 수를 시간축으로 보면 차이가 더 분명합니다. 부하 상태에서 20초 동안 MVC는 233~234개를 유지했으며, worker 200개에 JVM 데몬 스레드를 더한 값으로, worker를 전부 소진한 상태입니다. 반면에 WebFlux는 같은 구간에서 46~48개였습니다.</p>
-              <div class="m-fig m-fig--lg"><img src="assets/img/project/nextgen-messaging-platform/bench/bench_thread.png" data-zoom alt="부하 구간의 스레드 수 추이"></div>
-
-              <p class="m-sol__block-desc">MVC는 요청에 대한 응답이 완료될 때까지 tomcat worker thread를 점유하기 때문에, 동시에 처리할 수 있는 요청 수가 worker 수만큼 제한됩니다.</p>
-              <div class="m-sol__row m-sol__row--split">
-                  <div class="m-fig">
-                      <img src="assets/img/project/nextgen-messaging-platform/bench/bench_tps.png" data-zoom alt="동시 사용자 수에 따른 처리량"></div>
-                  <div class="m-fig">
-                      <img src="assets/img/project/nextgen-messaging-platform/bench/bench_p95.png" data-zoom alt="동시 사용자 수에 따른 p95 응답시간"></div>
-              </div>
-              <p class="m-sol__block-desc">따라서 위 그림을 보면 증가하는 사용자 수에따라서 MVC모델은 tomcat worker thread 수를 초과하여 Tomcat 엔진 내부에 있는 Accept Queue로 적재되거나 OS 단계에서 요청이 머물러있게되고, 그 반면에 Webflux는 요청마다 스레드를 할당하지 않고 소수의 고정된 스레드가 Non-blocking I/O와 Event Loop 방식으로 동작하기 때문에, 스레드 고갈 현상 없이 수많은 동시 접속을 적은 자원으로도 지연 없이 처리할 수 있습니다.</p>
-          </div>
-
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <span class="m-sol__step">STEP 04</span>
-              <h4 class="m-sol__block-title">실제 환경에서 검증</h4>
-            </div>
-            <p class="m-sol__block-desc">이제 실제 Redis와 MariaDB의 조회 요청을 붙인 환경에서도 같은 현상이 나오는지 확인했습니다. <strong>부하를 1,500 TPS로 고정</strong>하고, 같은 처리량을 내는 데 각 모델이 자원을 얼마나 쓰는지를 봤습니다.</p>
-            <div class="m-sol__row m-sol__row--split m-cmp-cols">
-              <span>Spring MVC</span>
-              <span>Spring WebFlux</span>
-            </div>
-            <p class="m-fig-label">Threads / Thread States</p>
-            <div class="m-sol__row m-sol__row--split">
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/mvc_threads.png" data-zoom alt="MVC 스레드와 스레드 상태"></div>
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/webflux_thread.png" data-zoom alt="WebFlux 스레드와 스레드 상태"></div>
-            </div>
-            <p class="m-fig-label">CPU Usage</p>
-            <div class="m-sol__row m-sol__row--split">
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/mvc_cpu.png" data-zoom alt="MVC CPU 사용률"></div>
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/webflux_cpu.png" data-zoom alt="WebFlux CPU 사용률"></div>
-            </div>
-            <p class="m-fig-label">JVM Heap</p>
-            <div class="m-sol__row m-sol__row--split">
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/mvc_heap.png" data-zoom alt="MVC JVM Heap"></div>
-              <div class="m-fig"><img src="assets/img/project/nextgen-messaging-platform/webflux_heap.png" data-zoom alt="WebFlux JVM Heap"></div>
-            </div>
-            <table class="m-table">
-              <thead>
-                <tr><th>지표</th><th>Spring MVC</th><th>Spring WebFlux</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>스레드 (부하 전 → 후)</td><td>29 → 118</td><td class="is-hi">27 → 27</td></tr>
-                <tr><td>timed-waiting / runnable</td><td>107 / 39</td><td class="is-hi">7 / 14</td></tr>
-                <tr><td>CPU system max</td><td>58.7%</td><td class="is-hi">45.6%</td></tr>
-                <tr><td>CPU process max</td><td>36.4%</td><td class="is-hi">27.6%</td></tr>
-                <tr><td>JVM Heap</td><td>1.11 GiB</td><td class="is-hi">449 MiB</td></tr>
-              </tbody>
-            </table>
-            <p class="m-sol__block-desc"><strong>Threads.</strong> MVC는 요청 하나가 응답을 마칠 때까지 Tomcat worker 스레드를 점유합니다(<a href="https://tomcat.apache.org/tomcat-10.1-doc/config/http.html" target="_blank" rel="noopener">maxThreads</a>, 기본 200). 응답을 기다리는 요청 수만큼 스레드가 살아 있어야 하므로 부하 구간에서 118개까지 늘었고 그중 107개가 timed-waiting이었습니다. WebFlux는 <a href="https://docs.spring.io/spring-framework/reference/web/webflux/reactive-spring.html#webflux-concurrency-model" target="_blank" rel="noopener">고정 크기의 이벤트 루프 스레드</a>로 요청을 처리하며 그 수가 대체로 코어 수를 따르기 때문에, 요청량과 관계없이 27개를 유지했습니다.
-
-<strong>CPU.</strong> process는 JVM이 점유한 CPU이고 system은 커널 처리까지 포함한 호스트 전체 사용률입니다. 스레드가 4배면 스케줄러가 다뤄야 할 대상과 컨텍스트 스위치도 함께 늘어나는데, 이 비용은 JVM 사용률이 아니라 커널 시간으로 잡힙니다. 두 값의 격차가 MVC 22.3%, WebFlux 18.0%로 벌어진 이유입니다.
-
-<strong>Heap.</strong> 대기 중인 요청은 요청, 응답 버퍼와 스레드에 바인딩된 컨텍스트를 계속 붙들고 있습니다. MVC는 이런 객체가 100개 넘게 동시에 살아 있고 수명도 길어, young 영역에서 회수되지 못한 채 old로 승격되며 점유가 쌓입니다. WebFlux는 대기 구간에서 스레드를 반납하고 네트워크 버퍼도 <a href="https://netty.io/wiki/using-as-a-generic-library.html" target="_blank" rel="noopener">풀링된 다이렉트 버퍼</a>로 힙 밖에서 재사용하기 때문에, 힙에 남는 양 자체가 적습니다. 다만 양쪽 다 Full GC 없이 GC 멈춤은 10ms 안팎을 유지했으므로, 힙 차이가 응답 지연으로 이어지지는 않았습니다.</p>
-          </div>
-
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <span class="m-sol__step">STEP 05</span>
-              <h4 class="m-sol__block-title">결론</h4>
-            </div>
-            <table class="m-table">
-              <thead>
-                <tr><th>측정</th><th>Spring MVC</th><th>Spring WebFlux</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>처리량 · 250 VU</td><td>3,406 TPS</td><td class="is-hi">4,201 TPS <span class="is-delta">+23.3%</span></td></tr>
-                <tr><td>처리량 · 500 VU</td><td>3,416 TPS</td><td class="is-hi">8,380 TPS <span class="is-delta">+145.3%</span></td></tr>
-                <tr><td>p95 · 500 VU</td><td>180.2ms</td><td class="is-hi">69.6ms <span class="is-delta">-61.4%</span></td></tr>
-                <tr><td>peak 스레드</td><td>234개</td><td class="is-hi">48개</td></tr>
-                <tr><td>요청당 CPU</td><td>0.123 core-ms</td><td>0.168 core-ms <span class="is-delta">+36.7%</span></td></tr>
-                <tr><td>실환경 1,500 TPS · 스레드 / 힙</td><td>118개 / 1.11 GiB</td><td class="is-hi">27개 / 449 MiB</td></tr>
-              </tbody>
-            </table>
-            <p class="m-sol__block-desc">WebFlux를 택한 이유는 빠르기가 아니라 <strong>한계 지점</strong>입니다. MVC는 worker 200개를 전부 대기에 묶으면서 3,400 TPS에서 평탄해졌지만, WebFlux는 같은 장비에서 48개 스레드로 8,380 TPS까지 갔습니다.
-
-요청당 CPU를 36.7% 더 쓰는 것이 그 대가입니다. 이 교환이 이득인지는 무엇이 먼저 고갈되느냐로 갈립니다. 접수 API는 Redis 조회, DB 조회, 중계사 API 호출이 이어지는 I/O 체인이고 동시 접수가 수천 건 단위로 들어옵니다. CPU는 남는데 스레드가 먼저 바닥나는 구조였고, 온프레미스라 장비를 늘려 해결할 수도 없었습니다. 그래서 CPU를 더 주고 스레드를 산 것입니다.
-
-반대 조건이었다면 답도 반대입니다.</p>
-            <table class="m-table">
-              <thead>
-                <tr><th>상황</th><th>MVC를 골라야 하는 이유</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>동시성이 낮을 때</td><td>50~100 VU 구간에서는 MVC가 오히려 앞섰습니다. 스레드가 남는데 Reactive Pipeline 처리 비용만 더할 이유가 없습니다.</td></tr>
-                <tr><td>CPU 연산이 지배적일 때</td><td>이번 테스트에서 얻은 이점은 전부 대기 중 스레드를 놓는 데서 나왔습니다. 병목이 대기가 아니라 계산이면 스레드를 반납해도 남는 것이 없습니다.</td></tr>
-                <tr><td>Blocking 드라이버를 써야 할 때</td><td>체인에 Blocking 호출이 하나만 섞여도 이벤트 루프가 묶여 이점이 사라집니다. JDBC나 레거시 SDK를 걷어낼 수 없다면 MVC가 정직한 선택입니다.</td></tr>
-                <tr><td>장애 분석 속도가 중요할 때</td><td>리액티브는 스택 트레이스가 끊겨 원인 추적이 느려집니다. 소수 인원이 운영까지 맡는 팀에서는 이 비용이 큽니다.</td></tr>
-              </tbody>
-            </table>
-            <p class="m-sol__block-desc">차세대 플랫폼의 접수 API는 Redis 조회, DB 조회, 중계사 API 호출이 이어지고 동시 접수가 수천 건 단위로 들어옵니다. 위 네 가지 중 어디에도 해당하지 않아 WebFlux를 택했습니다.
-
-대신 위 표의 조건을 그대로 과제로 안고 갔습니다. 체인 전체가 Non-Blocking이어야 의미가 있으므로 DB 접근을 R2DBC로 바꿨고, 끊긴 스택 트레이스는 Context API로 요청 추적 정보를 이어 붙이는 공통 함수를 만들어 보완했습니다.</p>
-          </div>
-
-        </div>
-      </article>
-
-      <article class="m-sol__item">
-        <p class="m-sol__num" aria-hidden="true">03</p>
-        <div class="m-sol__body">
-          <p class="m-sol__sub">처리량 변경의 결합</p>
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <h4 class="m-sol__block-title">TPS 정책을 코드 밖으로</h4>
-            </div>
-            <p class="m-sol__block-desc">정책은 운영 중에 바뀌는 값인데 배포 주기에 묶여 있었습니다. Gateway 필터와 Redis로 옮겨 재기동 없이 즉시 반영되도록 했습니다.</p>
-          </div>
-        </div>
-      </article>
-      <article class="m-sol__item">
-        <p class="m-sol__num" aria-hidden="true">04</p>
-        <div class="m-sol__body">
-          <p class="m-sol__sub">운영 부담과 자원 누적</p>
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <h4 class="m-sol__block-title">탐색·설정·관측을 중앙으로</h4>
-            </div>
-            <p class="m-sol__block-desc">인스턴스가 늘어난 만큼 관리 지점도 늘어나면 확장한 의미가 없습니다. 어디에 무엇이 떠 있는지를 사람이 아니라 시스템이 알게 했습니다.</p>
-          </div>
-        </div>
-      </article>
-      <article class="m-sol__item">
-        <p class="m-sol__num" aria-hidden="true">05</p>
-        <div class="m-sol__body">
-          <p class="m-sol__sub">서비스 간 결합</p>
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <h4 class="m-sol__block-title">RabbitMQ 기반 비동기 이벤트 파이프라인</h4>
-            </div>
-            <p class="m-sol__block-desc">접수와 발송이 같은 호출 흐름에 묶여 있으면 한쪽이 느려질 때 다른 쪽도 함께 멈춥니다. 이벤트로 끊어 각자의 속도로 처리되게 했습니다.</p>
-          </div>
-        </div>
-      </article>
-      <article class="m-sol__item">
-        <p class="m-sol__num" aria-hidden="true">06</p>
-        <div class="m-sol__body">
-          <p class="m-sol__sub">동기식 I/O의 스레드 점유</p>
-          <div class="m-sol__block">
-            <div class="m-sol__head">
-              <h4 class="m-sol__block-title">Non-Blocking 파이프라인으로 동시성 모델 교체</h4>
-            </div>
-            <p class="m-sol__block-desc">장애 대응이 아니라 워크로드에 맞춘 선택이었습니다. 한 건 처리에 외부 I/O가 여러 번 필요한 구조라 대기 시간에 스레드를 붙잡아 두지 않는 모델이 맞다고 봤습니다. 다만 느낌으로 정하지 않고, 같은 조건에서 두 모델을 직접 재본 뒤 결정했습니다.</p>
-          </div>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="m-sec">
-    <p class="m-sec__label">DIRECT IMPLEMENTATION · 직접 구현</p>
-    <ul class="m-impl"><li>API Gateway</li><li>Message Server</li><li>Router</li><li>DB Logger</li><li>Reporter</li><li>Retry Reporter</li><li>Storage Server</li><li>OAuth 인증 서버</li><li>Config Server</li><li>Eureka</li></ul>
-  </section>
-
-  <section class="m-sec">
-    <p class="m-sec__label is-accent">VALIDATION · 검증</p>
-    <div class="m-tests">
-      <div>
-        <p class="m-test__name">① API Gateway 고객별 TPS 제어</p>
-        <p class="m-test__cond">12 Client · 100–1,500 TPS 설정 · k6</p>
-        <div class="m-test__nums">
-          <div>
-            <p class="m-test__num">p95 &lt; 100ms</p>
-            <p class="m-test__cap">목표 응답속도 달성</p>
-          </div>
-          <div>
-            <p class="m-test__num">12</p>
-            <p class="m-test__cap">Client별 TPS 제어</p>
-          </div>
-          <div>
-            <p class="m-test__num">1,500</p>
-            <p class="m-test__cap">최대 설정 TPS</p>
-          </div>
-        </div>
-      </div>
-      <div>
-        <p class="m-test__name">② MVC vs WebFlux 처리 모델 벤치마크</p>
-        <p class="m-test__cond">별도 벤치마크 · 4C/8T · Connection Pool 100 · Req→Redis→DB→Res</p>
-        <div class="m-test__nums">
-          <div>
-            <p class="m-test__num">118→27</p>
-            <p class="m-test__cap">Peak Thread 수</p>
-          </div>
-          <div>
-            <p class="m-test__num">6.3×</p>
-            <p class="m-test__cap">평균 응답 127→20ms</p>
-          </div>
-          <div>
-            <p class="m-test__num">46→36%</p>
-            <p class="m-test__cap">CPU 사용률</p>
-          </div>
-        </div>
-      </div>
-      <div>
-        <p class="m-test__name">③ 메시지 접수 API 부하 테스트</p>
-        <p class="m-test__cond">8C/16T · 32GB · 3,500 TPS 10분 고정 — 접수 성능이며 최종 발송량이 아닙니다</p>
-        <div class="m-test__nums">
-          <div>
-            <p class="m-test__num">3,500</p>
-            <p class="m-test__cap">TPS 안정 처리</p>
-          </div>
-          <div>
-            <p class="m-test__num">~50ms</p>
-            <p class="m-test__cap">p95 응답</p>
-          </div>
-          <div>
-            <p class="m-test__num">0%</p>
-            <p class="m-test__cap">오류율</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="m-sec">
-    <p class="m-sec__label">RESULT · 결과</p>
-    <p class="m-cap">Agent 설치 없이 REST API로 연동할 수 있게 됐고, TPS 정책을 무중단으로 변경하며 고객사에 최대 1,500 TPS를 제공합니다. Sender 장애 시 Queue 메시지를 정상 Sender로 이관하는 시나리오도 검증했습니다.</p>
-  </section>
-</template>
 
 <!-- IMAGE LIGHTBOX -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="이미지 크게 보기">

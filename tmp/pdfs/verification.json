@@ -1,0 +1,56 @@
+{
+  "source_fragments_checked": 99,
+  "missing_source_fragments": [],
+  "page_count": 5,
+  "fonts_embedded": {
+    "/AAAAAA+Pretendard-Bold": true,
+    "/AAAAAA+Pretendard-Medium": true,
+    "/AAAAAA+Pretendard-Regular": true,
+    "/AAAAAB+Pretendard-Regular": true,
+    "/AAAAAA+Pretendard-SemiBold": true
+  },
+  "text_contrast_on_white": {
+    "20282d": 14.97,
+    "323a40": 11.57,
+    "5e686f": 5.7
+  },
+  "page_checks": [
+    {
+      "page": 1,
+      "A4": true,
+      "chars": 1226,
+      "body_min_size_pt": 9.0,
+      "within_margins": true
+    },
+    {
+      "page": 2,
+      "A4": true,
+      "chars": 1116,
+      "body_min_size_pt": 9.0,
+      "within_margins": true
+    },
+    {
+      "page": 3,
+      "A4": true,
+      "chars": 1775,
+      "body_min_size_pt": 9.0,
+      "within_margins": true
+    },
+    {
+      "page": 4,
+      "A4": true,
+      "chars": 1651,
+      "body_min_size_pt": 10.35,
+      "within_margins": true
+    },
+    {
+      "page": 5,
+      "A4": true,
+      "chars": 1523,
+      "body_min_size_pt": 9.0,
+      "within_margins": true
+    }
+  ],
+  "file_bytes": 120983,
+  "visual_review": "All five rendered pages inspected; no clipping or overlap."
+}

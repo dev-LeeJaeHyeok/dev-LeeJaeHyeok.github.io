@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>농협정보시스템 RCS 전송 서버 — 이재혁</title>
+<meta name="description" content="월 400만 건 규모의 RCS 문자를 처리하기 위한 시스템 구축. 3,000 TPS 처리 성능과 메시지 유실 방지 설계.">
+<meta property="og:title" content="농협정보시스템 RCS 전송 서버 — 이재혁">
+<meta property="og:description" content="월 400만 건 규모의 RCS 문자를 처리하기 위한 시스템 구축. 3,000 TPS 처리 성능과 메시지 유실 방지 설계.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    /* Hallmark: Long Document; modern-minimal; studied-DNA (Toss Tech, Kakao Tech, NAVER D2); P4 H4 E4 S5 R5 V4. */
+    :root {
+      color-scheme: light;
+      --color-paper: oklch(100% 0 0);
+      --color-ink: oklch(23.74441% 0.0195228 258.3548);
+      --color-copy: oklch(35.67758% 0.0278338 256.8231);
+      --color-muted: oklch(56.15592% 0.0254252 254.4895);
+      --color-rule: oklch(92.95602% 0.0051928 247.8799);
+      --color-divider: oklch(87.36939% 0.0087901 247.9266);
+      --color-case-ink: oklch(24% 0.003 70);
+      --color-case-copy: oklch(33% 0.003 70);
+      --color-case-accent: oklch(53% 0.16 258);
+      --color-case-guide: oklch(77% 0.004 70);
+      --color-case-heading-surface: oklch(96% 0.002 70);
+      --color-link: oklch(52.68206% 0.1673571 258.0737);
+      --color-backdrop: oklch(15% 0 0 / 0.82);
+      --font-body: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --space-xs: 8px;
+      --space-sm: 16px;
+      --space-md: 24px;
+      --space-lg: 32px;
+      --space-xl: 48px;
+      --space-2xl: 64px;
+      --space-3xl: 80px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; overflow-x: clip; }
+    body {
+      background: var(--color-paper);
+      color: var(--color-copy);
+      font-family: var(--font-body);
+      font-size: 19px;
+      line-height: 1.8;
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, p, figure { margin: 0; }
+    h1, h2, h3 { color: var(--color-ink); font-style: normal; word-break: keep-all; overflow-wrap: anywhere; }
+    p, li, figcaption { word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--color-link); text-underline-offset: 4px; }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--color-link); outline-offset: 5px; }
+    button { font: inherit; color: inherit; }
+    strong { color: var(--color-ink); font-weight: 700; }
+    .skip-link { position: absolute; left: var(--space-md); top: 0; transform: translateY(-150%); padding: var(--space-xs) var(--space-sm); background: var(--color-paper); z-index: 10; }
+    .skip-link:focus { transform: none; }
+    .site-header { border-bottom: 1px solid var(--color-rule); }
+    .site-header__inner { max-width: 1120px; min-height: 92px; margin-inline: auto; padding: var(--space-md) var(--space-lg); display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+    .site-header__name { color: var(--color-ink); font-size: 16px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .project-heading { position: relative; }
+    .project-back { position: absolute; inset-inline-end: calc(100% + var(--space-md)); top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 10px; width: max-content; min-height: 44px; flex: none; color: var(--color-copy); font-size: 16px; font-weight: 500; line-height: 1; text-decoration: none; white-space: nowrap; }
+    .project-back__circle { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border: 1px solid var(--color-divider); border-radius: 50%; background: var(--color-paper); }
+    .project-back:hover { color: var(--color-ink); }
+    .project-back:active { color: var(--color-copy); }
+    .project-back:active .project-back__circle { background: var(--color-rule); }
+    .project-back svg { width: 18px; height: 18px; }
+    main { max-width: 860px; padding: var(--space-2xl) var(--space-lg) var(--space-3xl); margin-inline: auto; }
+    .project-case { --solution-indent: 24px; margin-top: var(--space-3xl); padding-top: var(--space-xl); border-top: 1px solid var(--color-divider); color: var(--color-case-copy); }
+    .case-heading > h2 { min-width: 0; color: var(--color-case-ink); font-size: 30px; line-height: 1.45; font-weight: 700; }
+    h1 { font-size: 32px; font-weight: 700; line-height: 1.45; text-wrap: balance; min-width: 0; }
+    .project-meta { margin: var(--space-md) 0 0; font-size: 16px; line-height: 1.7; }
+    .project-meta > div { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: var(--space-sm); align-items: baseline; }
+    .project-meta > div + div { margin-top: 10px; }
+    .project-meta dt { color: var(--color-muted); font-weight: 400; }
+    .project-meta dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+    .project-techs { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 0; padding: 0; list-style: none; }
+    .project-techs li { display: inline-flex; align-items: center; gap: 7px; min-height: 28px; white-space: nowrap; }
+    .project-techs img { width: 20px; height: 20px; object-fit: contain; flex: none; }
+    .case-part { margin-top: var(--space-xl); }
+    .case-part > h2 { font-size: 26px; line-height: 1.5; font-weight: 700; margin-bottom: var(--space-md); }
+    .project-case > .case-part { margin-top: 36px; }
+    .project-case > .case-block + .case-block { margin-top: var(--space-xl); }
+    .case-block > h3 { border-inline-start: 3px solid var(--color-case-accent); padding-inline-start: 12px; color: var(--color-case-ink); font-size: 24px; line-height: 1.5; font-weight: 650; margin-bottom: var(--space-sm); }
+    .case-block p + p { margin-top: var(--space-sm); }
+    .case-block ul { margin: 0; padding-left: 24px; }
+    .case-block li { padding-left: 2px; }
+    .case-block li + li { margin-top: 10px; }
+    .solution-topic { margin-top: 20px; padding-inline-start: 15px; }
+    .solution-topic__title { margin: 0; color: var(--color-case-ink); font-size: 24px; line-height: 1.55; font-weight: 700; font-style: normal; word-break: keep-all; overflow-wrap: anywhere; }
+    .solution-topic__body { margin-top: var(--space-sm); padding-inline-start: var(--solution-indent); border-inline-start: 1px solid var(--color-case-guide); }
+    .solution-subsection { margin-top: 28px; }
+    .solution-subsection__title { position: relative; margin: 0 -12px 16px; padding: 8px 12px; background: var(--color-case-heading-surface); color: var(--color-case-ink); font-size: 21px; line-height: 1.6; font-weight: 650; font-style: normal; word-break: keep-all; overflow-wrap: anywhere; }
+    .solution-subsection__title::before { content: ""; position: absolute; inset-inline-start: calc(11px - var(--solution-indent)); inset-block-start: calc(0.8em + 8px); width: calc(var(--solution-indent) - 11px); height: 1px; background: var(--color-case-guide); }
+    .solution-subsection p + ul { margin-top: var(--space-sm); }
+    .case-table { width: 100%; margin-top: var(--space-sm); border-collapse: collapse; text-align: left; }
+    .case-table th, .case-table td { padding: 12px 14px; border-bottom: 1px solid var(--color-rule); vertical-align: top; overflow-wrap: anywhere; }
+    .case-table thead th { border-bottom-color: var(--color-divider); color: var(--color-case-ink); font-weight: 650; }
+    .case-table th:first-child { width: 30%; }
+    .case-table code { overflow-wrap: anywhere; }
+    .backend-service + .backend-service { margin-top: var(--space-lg); }
+    .backend-service__title { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin: 0 0 12px; color: var(--color-case-ink); font-size: 19px; line-height: 1.6; font-weight: 650; }
+    .backend-service__icons { display: inline-flex; align-items: center; gap: 8px; }
+    .backend-service__icons img { display: block; width: 20px; height: 20px; object-fit: contain; }
+    .solution-subsection .case-figure + p { margin-top: var(--space-md); }
+    .monitoring-case .case-figure + ul { margin-top: var(--space-md); }
+    .case-figure { margin-top: var(--space-lg); }
+    .m-fig-label { color: var(--color-ink); font-size: 17px; line-height: 1.6; font-weight: 600; margin-bottom: 12px; }
+    .figure-zoom { display: block; position: relative; width: 100%; padding: 0; border: 1px solid var(--color-rule); background: var(--color-paper); cursor: zoom-in; }
+    .figure-zoom img { display: block; width: 100%; height: auto; }
+    .figure-zoom__icon { position: absolute; bottom: var(--space-xs); right: var(--space-xs); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 4px; background: var(--color-paper); color: var(--color-muted); }
+    .figure-zoom__icon svg { width: 18px; height: 18px; }
+    .figure-zoom:hover .figure-zoom__icon { color: var(--color-ink); }
+    .figure-zoom:active .figure-zoom__icon { color: var(--color-link); }
+    .figure-zoom:disabled, .lightbox__close:disabled { opacity: 0.55; cursor: not-allowed; }
+    .lightbox { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: var(--space-lg); }
+    .lightbox.is-open { display: flex; }
+    .lightbox__backdrop { position: absolute; inset: 0; background: var(--color-backdrop); }
+    .lightbox img { position: relative; display: block; max-width: 100%; max-height: calc(100dvh - 96px); width: auto; height: auto; object-fit: contain; background: var(--color-paper); }
+    .lightbox__close { position: absolute; z-index: 1; top: var(--space-sm); right: var(--space-sm); width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 4px; background: var(--color-paper); cursor: pointer; color: var(--color-ink); }
+    .lightbox__close:hover { color: var(--color-link); }
+    .lightbox__close:active { color: var(--color-copy); }
+    .lightbox__close svg { width: 22px; height: 22px; }
+    @media (max-width: 1048px) {
+      .project-heading { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-md); }
+      .project-back { position: static; transform: none; }
+    }
+    @media (max-width: 600px) {
+      body { font-size: 18px; }
+      .site-header__inner { min-height: 68px; padding: 12px 22px; gap: var(--space-sm); }
+      .site-header__name { font-size: 14px; }
+      main { padding: 40px 22px var(--space-2xl); }
+      .project-case { --solution-indent: 16px; margin-top: var(--space-2xl); padding-top: var(--space-lg); }
+      .case-heading > h2 { font-size: 28px; }
+      h1 { font-size: 27px; line-height: 1.5; }
+      .project-meta { font-size: 16px; }
+      .project-meta > div { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; }
+      .project-meta > .project-meta__tech { display: block; margin-top: var(--space-sm); }
+      .project-meta__tech dt { margin-bottom: var(--space-xs); }
+      .project-techs { gap: 8px 16px; }
+      .case-part { margin-top: 36px; }
+      .case-part > h2 { font-size: 24px; margin-bottom: 20px; }
+      .project-case > .case-part { margin-top: var(--space-lg); }
+      .project-case > .case-block + .case-block { margin-top: 40px; }
+      .case-block > h3 { font-size: 22px; }
+      .solution-topic__title { font-size: 22px; }
+      .solution-subsection__title { font-size: 20px; }
+      .backend-service__title { font-size: 18px; }
+      .case-figure { margin-top: var(--space-md); }
+      .m-fig-label { font-size: 16px; }
+      .lightbox { padding: var(--space-sm); }
+    }
+    @media (max-width: 360px) {
+      h1 { font-size: 25px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+    .nh-page .case-block > .solution-topic__body { margin-inline-start: 15px; }
+    .nh-page .solution-topic__body > .solution-subsection__title { margin-top: var(--space-lg); }
+    .nh-page .solution-topic__body > .solution-subsection__title:first-child { margin-top: 0; }
+    .nh-page .case-block p + ul, .nh-page .case-block ul + p { margin-top: var(--space-sm); }
+    .nh-page .case-table { line-height: 1.65; }
+    .nh-page .case-table tbody th { color: var(--color-case-ink); font-weight: 500; word-break: keep-all; overflow-wrap: normal; }
+    .nh-page .case-figure + p { margin-top: var(--space-sm); }
+    .nh-page .figure-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-md); margin-block: var(--space-lg); }
+    .nh-page .figure-pair > div { min-width: 0; }
+    .nh-page .figure-pair .case-figure { margin-top: 0; }
+    .nh-page .case-figure--metric .figure-zoom__icon { top: var(--space-xs); bottom: auto; }
+    .nh-page .backend-services { margin-top: 36px; }
+    .nh-page .backend-service__title { font-size: 21px; }
+    .nh-page .backend-service ul { margin: var(--space-sm) 0 0; padding-left: 24px; }
+    .nh-page .backend-service li { padding-left: 2px; word-break: keep-all; overflow-wrap: anywhere; }
+    .nh-page .backend-service li + li { margin-top: 10px; }
+    @media (max-width: 600px) {
+      .nh-page .figure-pair { grid-template-columns: minmax(0, 1fr); }
+      .nh-page .case-table th, .nh-page .case-table td { padding: 12px 8px; }
+      .nh-page .case-table th:first-child { width: 36%; }
+      .nh-page .backend-services { margin-top: var(--space-lg); }
+      .nh-page .backend-service__title { font-size: 20px; }
+    }
+
+  </style>
+</head>
+<body class="nh-page">
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__name" href="../../index.html">LEE JAEHYEOK</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <article aria-labelledby="project-title">
+      <header>
+        <div class="project-heading">
+          <a class="project-back" href="../../index.html#work" aria-label="이전 페이지로 돌아가기">
+            <span class="project-back__circle" aria-hidden="true"><i data-lucide="arrow-left"></i></span>
+            <span>이전</span>
+          </a>
+          <h1 id="project-title">농협정보시스템 RCS 전송 서버</h1>
+        </div>
+        <dl class="project-meta">
+          <!--      <dt>기간</dt><dd>2022.01 — 2023.03</dd>-->
+          <div>
+            <dt>역할</dt>
+            <dd>프로젝트 리더, 서버 개발, 프로토콜 구현, 장애 복구 설계, 모니터링 구축</dd>
+          </div>
+          <div class="project-meta__tech">
+            <dt>기술</dt>
+            <dd>
+              <ul class="project-techs" aria-label="사용 기술">
+                <li><img src="../../assets/img/logos/java.svg" alt="" aria-hidden="true" width="20" height="20">Java 11</li>
+                <li><img src="../../assets/img/logos/spring.svg" alt="" aria-hidden="true" width="20" height="20">Spring Boot 2.7</li>
+                <li><img src="../../assets/img/logos/netty.svg" alt="" aria-hidden="true" width="20" height="20">Netty 4.1</li>
+                <li><img src="../../assets/img/logos/rabbitmq.svg" alt="" aria-hidden="true" width="20" height="20">RabbitMQ</li>
+                <li><img src="../../assets/img/logos/redis.svg" alt="" aria-hidden="true" width="20" height="20">Redis</li>
+                <li><img src="../../assets/img/logos/mariadb.svg" alt="" aria-hidden="true" width="20" height="20">MariaDB</li>
+                <li><img src="../../assets/img/logos/prometheus.svg" alt="" aria-hidden="true" width="20" height="20">Prometheus</li>
+                <li><img src="../../assets/img/logos/grafana.svg" alt="" aria-hidden="true" width="20" height="20">Grafana</li>
+              </ul>
+            </dd>
+          </div>
+        </dl>
+      </header>
+
+      <section class="case-part" aria-labelledby="overview-title">
+        <h2 id="overview-title">이 프로젝트는</h2>
+        <div class="project-summary">
+          <p>농협정보시스템의 월 400만 건 규모 RCS 문자를 처리하는 시스템을 구축하는 프로젝트입니다.
+          <br>시스템 설계와 서버 개발, 성능 및 장애 테스트를 담당했습니다.
+        </p>
+        </div>
+        <figure class="case-figure">
+              <figcaption class="m-fig-label">RCS 전송 시스템 구성도</figcaption>
+              <button class="figure-zoom" type="button" data-zoom="../../assets/img/project/NH/system-arch.png" aria-label="RCS 전송 시스템 구성도 크게 보기" title="이미지 크게 보기">
+                <img src="../../assets/img/project/NH/system-arch.png" alt="고객사 TCP 통신과 통신사 API 연동, 이력 기록, 첨부파일 관리 서버를 RabbitMQ로 연결한 RCS 전송 시스템 구성도" width="3694" height="2200" loading="eager" decoding="async">
+                <span class="figure-zoom__icon" aria-hidden="true"><i data-lucide="expand"></i></span>
+              </button>
+            </figure>
+        <!--      <p class="m-sol__block-desc">고객사와의 TCP 통신, 통신사 API 연동, 이력 기록, 첨부파일 관리를 각각의 서버로 분리했습니다. 서버 간 작업은 RabbitMQ 이벤트로 전달하고, 발송과 이력 기록처럼 서로의 완료를 기다릴 필요가 없는 작업은 별도로 처리하도록 구성했습니다.</p>-->
+      </section>
+
+      <section class="project-case" aria-labelledby="design-title">
+        <div class="case-heading">
+          <h2 id="design-title">기술 선택과 구현</h2>
+        </div>
+        <section class="case-part case-block" aria-labelledby="netty-title">
+          <h3 id="netty-title">TCP 서버에 Netty 프레임워크 기술 선택과 검증</h3>
+          <div class="solution-topic__body">
+            <h4 class="solution-subsection__title" id="netty-research-title">리서치</h4>
+            <ul class="nh-points">
+              <li><a href="https://netty.io/" target="_blank" rel="noopener">Netty 공식 문서</a> - 사례를 통해 Netty 기반의 비동기 Non-Blocking 구조가 Connection마다 Thread를 점유하지 않고 소수의 EventLoop Thread로 다수의 연결을 처리하여, Persistent Connection의 유지 비용을 낮출 수 있음을 확인했습니다. 또한 I/O 비중이 높은 환경에서는 실제 운영에서 처리량 증가와 CPU 사용량 감소가 확인된 사례를 바탕으로, 다수의 TCP Session을 지속적으로 유지해야 하는 환경에서 제한된 서버 자원을 효율적으로 활용할 수 있을 것으로 기대했습니다.</li>
+              <li><a href="https://netflixtechblog.com/zuul-2-the-netflix-journey-to-asynchronous-non-blocking-systems-45947377fb5c" target="_blank" rel="noopener">운영 사례</a>, <a href="https://www.brendangregg.com/Slides/RxNetty_vs_Tomcat_April2015.pdf" target="_blank" rel="noopener">성능 분석 자료</a> - Netty의 EventLoop 구조가 Thread Migration 감소와 CPU Cache 효율 향상을 통해 요청당 CPU 사용량을 낮추고, 고부하에서 더 높은 처리량과 안정적인 Latency를 보이며, 이를 통해 다수의 TCP Session을 처리하는 서버에서도 제한된 CPU 자원으로 높은 처리 효율을 확보할 수 있을 것으로 판단했습니다.</li>
+            </ul>
+
+<!--                  <p class="m-fig-label">이벤트 소비</p>-->
+                  <h4 class="solution-subsection__title" id="netty-test-title">테스트를 통한 처리량 검증</h4>
+                  <p>클라이언트와 서버는 Java 11, Netty 기반으로 개발되었습니다. 실제 로직으로 클라이언트 요청부터 이벤트 발행까지의 처리량과 안정성 검증을 위한 테스트이며, RabbitMQ는 TCP 서버 LAN 환경에 분리 설치하였습니다.
+                  처리 과정은 <strong>문자 발송 요청</strong> -> <strong>전문 디코딩</strong> -> <strong>Redis SET NX 요청</strong> -> <strong>RabbitMQ 이벤트 발행</strong> 이며, <strong>10회의 테스트에서 안정적으로 리소스 및 처리량을 유지하는지 확인합니다.</strong></p>
+                  <table class="case-table">
+                      <tbody>
+                      <tr><th scope="row">하드웨어 스펙</th><td>4 core 8 thread, 16G Memory</td></tr>
+                      <tr><th scope="row">GC</th><td>G1</td></tr>
+                      <tr><th scope="row">Heap Memory</th><td>512M</td></tr>
+                      <tr><th scope="row">Tool</th><td>JMC, Grafana, RabbitMQ Management Web</td></tr>
+                      <tr><th scope="row">테스트 준비</th><td>warm-up 60초 이후 부하 진행</td></tr>
+                      </tbody>
+                  </table>
+                  <figure class="case-figure case-figure--metric">
+              <figcaption class="m-fig-label">CPU 사용량</figcaption>
+              <button class="figure-zoom" type="button" data-zoom="../../assets/img/project/NH/JVM_CPU.png" aria-label="CPU 사용량 크게 보기" title="이미지 크게 보기">
+                <img src="../../assets/img/project/NH/JVM_CPU.png" alt="부하 테스트 중 JVM CPU 사용률 그래프" width="1082" height="268" loading="lazy" decoding="async">
+                <span class="figure-zoom__icon" aria-hidden="true"><i data-lucide="expand"></i></span>
+              </button>
+            </figure>
+              <p>부하 발생 시점부터 종료지점까지 안정적으로 처리되는 것을 확인하였습니다.</p>
+
+              <figure class="case-figure case-figure--metric">
+              <figcaption class="m-fig-label">Heap Memory</figcaption>
+              <button class="figure-zoom" type="button" data-zoom="../../assets/img/project/NH/heap.png" aria-label="Heap Memory 크게 보기" title="이미지 크게 보기">
+                <img src="../../assets/img/project/NH/heap.png" alt="부하 테스트 중 JVM Heap 사용량 그래프" width="1082" height="263" loading="lazy" decoding="async">
+                <span class="figure-zoom__icon" aria-hidden="true"><i data-lucide="expand"></i></span>
+              </button>
+            </figure>
+              <p>처리중 메모리 누수 현상이 발견되지 않았음을 확인하였습니다.</p>
+              <figure class="case-figure case-figure--metric">
+              <figcaption class="m-fig-label">이벤트 발행 속도</figcaption>
+              <button class="figure-zoom" type="button" data-zoom="../../assets/img/project/NH/receiver_test_1.png" aria-label="이벤트 발행 속도 크게 보기" title="이미지 크게 보기">
+                <img src="../../assets/img/project/NH/receiver_test_1.png" alt="부하 테스트 중 RabbitMQ 이벤트 발행 속도 그래프" width="1942" height="809" loading="lazy" decoding="async">
+                <span class="figure-zoom__icon" aria-hidden="true"><i data-lucide="expand"></i></span>
+              </button>
+            </figure>
+              <p>RabbitMQ에 발행되는 이벤트 속도입니다.</p>
+          </div>
+        </section>
+        <section class="case-part case-block" aria-labelledby="rabbitmq-title">
+          <h3 id="rabbitmq-title">RabbitMQ의 안전한 이벤트 처리 로직 구현</h3>
+          <div class="solution-topic__body">
+            <p>접수한 메시지를 유실하지 않으려면, 이벤트 발행에 실패하거나 소비자가 처리 도중 종료되는 상황에 대비해야 했습니다. 고객사에 접수 응답을 보내는 시점과 소비 완료를 알리는 시점을 각각 정했습니다.</p>
+            <div class="figure-pair">
+              <div>
+                <figure class="case-figure">
+              <figcaption class="m-fig-label">이벤트 발행</figcaption>
+              <button class="figure-zoom" type="button" data-zoom="../../assets/img/project/NH/rabbitmq_publish_flow.png" aria-label="이벤트 발행 크게 보기" title="이미지 크게 보기">
+                <img src="../../assets/img/project/NH/rabbitmq_publish_flow.png" alt="Publisher Confirm으로 브로커 수신을 확인한 뒤 고객사에 응답하는 이벤트 발행 흐름" width="2120" height="1513" loading="lazy" decoding="async">
+                <span class="figure-zoom__icon" aria-hidden="true"><i data-lucide="expand"></i></span>
+              </button>
+            </figure>
+              </div>
+              <div>
+                <figure class="case-figure">
+              <figcaption class="m-fig-label">이벤트 소비</figcaption>
+              <button class="figure-zoom" type="button" data-zoom="../../assets/img/project/NH/rabbitmq_consume_flow.png" aria-label="이벤트 소비 크게 보기" title="이미지 크게 보기">
+                <img src="../../assets/img/project/NH/rabbitmq_consume_flow.png" alt="비즈니스 로직 완료 후 Manual ACK를 전송하는 이벤트 소비 흐름" width="2088" height="1512" loading="lazy" decoding="async">
+                <span class="figure-zoom__icon" aria-hidden="true"><i data-lucide="expand"></i></span>
+              </button>
+            </figure>
+              </div>
+            </div>
+            <ul class="nh-points">
+              <li><strong>접수 응답 :</strong> Publisher Confirm으로 브로커 수신을 확인한 뒤 고객사에 응답 전문 전송</li>
+              <li><strong>소비 완료 :</strong> 비즈니스 로직이 완료된 뒤 Manual ACK를 전송해, 처리 중 종료된 메시지는 재전달받도록 구성</li>
+</ul>
+          </div>
+        </section>
+        <section class="case-part case-block" aria-labelledby="redis-title">
+          <h3 id="redis-title">Redis를 이용한 중복 요청 검사</h3>
+          <div class="solution-topic__body">
+            <p><strong>중복 요청 :</strong> 고객사 식별값과 메시지 식별값을 조합하고, Redis <code>SET NX EX</code>로 동일 요청 여부 검사</p>
+<div>
+                    <figure class="case-figure">
+              <button class="figure-zoom" type="button" data-zoom="../../assets/img/project/NH/message-key_DUP.png" aria-label="고객사 식별값과 메시지 식별값을 조합한 Redis Key로 중복 요청 검사 크게 보기" title="이미지 크게 보기">
+                <img src="../../assets/img/project/NH/message-key_DUP.png" alt="고객사 식별값과 메시지 식별값을 조합한 Redis Key로 중복 요청 검사" width="1760" height="1066" loading="lazy" decoding="async">
+                <span class="figure-zoom__icon" aria-hidden="true"><i data-lucide="expand"></i></span>
+              </button>
+            </figure>
+                </div>
+                <p>중복 검사 Key에는 1시간의 TTL을 적용했습니다. 최대 3,000 TPS가 한 시간 동안 지속되면 최대 1,080만 개의 Key가 유지될 수 있어, 이 조건을 기준으로 Redis 메모리를 계산했습니다.</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="project-case" aria-labelledby="development-title">
+        <div class="case-heading">
+          <h2 id="development-title">백엔드 개발</h2>
+        </div>
+        <div class="backend-services">
+          <section class="backend-service" aria-labelledby="receiver-title">
+            <h3 class="backend-service__title" id="receiver-title">Receiver<span class="backend-service__icons"><img src="../../assets/img/logos/java.svg" alt="Java" title="Java" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/spring.svg" alt="Spring Boot" title="Spring Boot" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/netty.svg" alt="Netty" title="Netty" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/rabbitmq.svg" alt="Spring AMQP, RabbitMQ" title="Spring AMQP, RabbitMQ" width="20" height="20" loading="lazy" decoding="async"></span></h3>
+            <p>고객사에 RCS 문자 전송 요청을 받기위한 TCP서버로 입니다.</p>
+        <ul>
+            <li>Netty 프레임워크를 사용하여 전문 타입별 바이너리 처리부터 이벤트 발행 흐름까지 구현</li>
+            <li>농협측 운영팀과의 기능, 성능, 장애 테스트를 수행하여 기준 통과</li>
+        </ul>
+          </section>
+          <section class="backend-service" aria-labelledby="sender-title">
+            <h3 class="backend-service__title" id="sender-title">Sender<span class="backend-service__icons"><img src="../../assets/img/logos/java.svg" alt="Java" title="Java" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/spring.svg" alt="Spring Boot" title="Spring Boot" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/rabbitmq.svg" alt="Spring AMQP, RabbitMQ" title="Spring AMQP, RabbitMQ" width="20" height="20" loading="lazy" decoding="async"></span></h3>
+            <p>이동통신사에서 제공하는 RCS API를 호출하는 전송 클라이언트 개발</p>
+          <ul>
+              <li>이동 통신사 RCS 처리 RESTful API 연동 </li>
+              <li>HTTP 클라이언트에서 발생할 수 있는 모든 예외처리 적용으로 운영기간 <strong>장애율 0%</strong></li>
+              <li>통신사 API 호출 시 연결 실패, 응답 시간 초과 등 HTTP 클라이언트에서 발생할 수 있는 응답을 명확하게 구분하여, 각 상황에 맞는 예외처리를 구현하였습니다.</li>
+          </ul>
+          </section>
+          <section class="backend-service" aria-labelledby="reporter-title">
+            <h3 class="backend-service__title" id="reporter-title">Reporter<span class="backend-service__icons"><img src="../../assets/img/logos/java.svg" alt="Java" title="Java" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/spring.svg" alt="Spring Boot" title="Spring Boot" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/netty.svg" alt="Netty" title="Netty" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/rabbitmq.svg" alt="Spring AMQP, RabbitMQ" title="Spring AMQP, RabbitMQ" width="20" height="20" loading="lazy" decoding="async"></span></h3>
+            <p>이동 통신사에서 비동기적으로 내려주는 RCS 문자 처리 결과 이벤트를 받아 고객사에게 전달하는 서버입니다.</p>
+          <ul>
+              <li>Netty 프레임워크를 사용하여 전문 타입별 바이너리 처리</li>
+              <li>RabbitMQ의 acknowledge mode를 통한 <strong>유실없는 이벤트 처리 구현</strong></li>
+          </ul>
+          </section>
+          <section class="backend-service" aria-labelledby="db-logger-title">
+            <h3 class="backend-service__title" id="db-logger-title">DB Logger<span class="backend-service__icons"><img src="../../assets/img/logos/spring.svg" alt="Spring Boot" title="Spring Boot" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/rabbitmq.svg" alt="Spring AMQP, RabbitMQ" title="Spring AMQP, RabbitMQ" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/mariadb.svg" alt="MariaDB" title="MariaDB" width="20" height="20" loading="lazy" decoding="async"></span></h3>
+            <p>시스템에서 발생하는 문자 처리 이력과 처리 결과를 반영하는 서버입니다.</p>
+          <ul>
+              <li>Database I/O를 위한 JDBC 라이브러리 사용</li>
+              <li>비동기 환경에서 발생하는 불일치 및 과도한 쿼리 수행을 방지하기위한 Upsert 처리</li>
+              <li>RabbitMQ의 acknowledge mode를 통한 <strong>유실없는 이벤트 처리 구현</strong></li>
+          </ul>
+          </section>
+          <section class="backend-service" aria-labelledby="storage-title">
+            <h3 class="backend-service__title" id="storage-title">Storage<span class="backend-service__icons"><img src="../../assets/img/logos/java.svg" alt="Java" title="Java" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/spring.svg" alt="Spring Boot" title="Spring Boot" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/rabbitmq.svg" alt="Spring AMQP, RabbitMQ" title="Spring AMQP, RabbitMQ" width="20" height="20" loading="lazy" decoding="async"></span></h3>
+            <!--        <p>파일 업로드와 다운로드 API, 파일 정보 관리, 통신사 파일 등록 구현. SHA-256 해시로 중복 파일 판별</p>-->
+        <p>문자의 첨부파일을 관리하는 서버입니다. 업로드와 다운로드 API를 제공하며, RCS 문자의 첨부파일을 실제 단말기로 전송하기 위해 이동통신사로 첨부파일 등록 과정을 거칩니다.</p>
+          <ul>
+              <li>이동통신사의 RCS 첨부파일 API 연동</li>
+              <li>JVM Heap 사용량 증가를 방지하기 위한 Buffer 기반 파일 I/O 처리</li>
+              <li>Disk I/O 병목 및 서버 과부하를 방지하기 위한 동시 파일 처리량 제어</li>
+              <li>비정상 파일 접근을 방지하기 위한 MIME Type 검증</li>
+          </ul>
+          </section>
+          <section class="backend-service" aria-labelledby="dummy-title">
+            <h3 class="backend-service__title" id="dummy-title">Dummy Client, Dummy Gateway<span class="backend-service__icons"><img src="../../assets/img/logos/java.svg" alt="Java" title="Java" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/spring.svg" alt="Spring Boot" title="Spring Boot" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/netty.svg" alt="Netty" title="Netty" width="20" height="20" loading="lazy" decoding="async"></span></h3>
+            <p>고객사 클라이언트와 통신사 API를 모방한 테스트 서버를 개발해 기능, 부하, 장애 테스트에 사용</p>
+          </section>
+        </div>
+      </section>
+<!--  <section class="m-sec" aria-labelledby="verification-title">-->
+<!--    <h2 class="m-sec__label" id="verification-title">검증 결과와 운영</h2>-->
+<!--    <div class="m-sol__block">-->
+<!--      <h3 class="m-sol__sub">처리 성능 확인</h3>-->
+<!--      <ul class="m-sol__block-desc nh-points">-->
+<!--        <li>Dummy Client, Receiver, Reporter, Sender, DB Logger, Dummy Gateway를 각각 분리한 서버 환경에서 테스트</li>-->
+<!--        <li>서버 사양은 4코어 CPU와 8GB 메모리이며, Grafana와 JMC로 처리 상태 확인</li>-->
+<!--        <li><strong>3,000 TPS 처리</strong>, 리포트 수신 후 고객사 전달 <strong>1초 이내</strong>로 측정해 목표인 3초 이내 전달 충족</li>-->
+<!--        <li>파이프라인 서버별 최대 CPU 사용률 42~58%, 테스트 중 메모리 누수 징후 미관측</li>-->
+<!--      </ul>-->
+<!--    </div>-->
+<!--    <div class="m-sol__block">-->
+<!--      <h3 class="m-sol__sub">장애 후 재처리 확인</h3>-->
+<!--      <ul class="m-sol__block-desc nh-points">-->
+<!--        <li>부하 발생 중 서버 프로세스를 순차 또는 무작위로 정상 종료하고, <code>kill -9</code> 강제 종료도 별도 수행</li>-->
+<!--        <li>재기동 후 미완료 메시지 재처리와 고객사 리포트 전달 여부 확인</li>-->
+<!--        <li>수행한 장애 테스트에서 <strong>메시지 유실 0건, 중복 0건</strong>으로 집계</li>-->
+<!--      </ul>-->
+<!--    </div>-->
+<!--    <div class="m-sol__block">-->
+<!--      <h3 class="m-sol__sub">고객사 연동과 모니터링</h3>-->
+<!--      <ul class="m-sol__block-desc nh-points">-->
+<!--        <li>농협정보시스템 운영개발팀과 개발기 및 운영기 연동 테스트 수행</li>-->
+<!--        <li>Actuator 메트릭을 Prometheus와 Grafana로 확인하고, 오류 발생 시 Alertmanager에서 Slack 알림 전송</li>-->
+<!--      </ul>-->
+<!--    </div>-->
+<!--  </section>-->
+
+
+    </article>
+  </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="이미지 크게 보기">
+    <div class="lightbox__backdrop" data-lb-close></div>
+    <button class="lightbox__close" type="button" data-lb-close aria-label="닫기" title="닫기"><i data-lucide="x" aria-hidden="true"></i></button>
+    <img id="lightboxImg" alt="">
+  </div>
+  <script src="../../script.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
