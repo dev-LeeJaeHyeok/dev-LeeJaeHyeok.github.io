@@ -358,6 +358,7 @@
   });
 
   if (modal) document.querySelectorAll('[data-skill]').forEach(el => {
+    if (el.disabled) return;
     // 시각적 신호(+ 마커)는 aria-hidden이므로 접근성 이름으로 용도를 밝힌다
     const label = el.querySelector('.chip__name');
     if (label) el.setAttribute('aria-label', label.textContent.trim() + ' 상세 경험 보기');

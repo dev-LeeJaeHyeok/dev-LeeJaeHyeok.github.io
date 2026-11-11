@@ -1,0 +1,33 @@
+/* Main page: retain the original layout; match the detail pages' light palette. */
+:root {
+  color-scheme: light;
+  --bg: oklch(100% 0 0);
+  --surface: oklch(96% 0.002 70);
+  --line: oklch(92.95602% 0.0051928 247.8799);
+  --line-2: oklch(87.36939% 0.0087901 247.9266);
+  --text: oklch(23.74441% 0.0195228 258.3548);
+  --text-2: oklch(35.67758% 0.0278338 256.8231);
+  --text-3: oklch(50% 0.0254252 254.4895);
+  --text-4: oklch(56.15592% 0.0254252 254.4895);
+  --accent: oklch(52.68206% 0.1673571 258.0737);
+  --accent-deep: oklch(96% 0.014 258);
+  --num-lead: oklch(70% 0.015 258);
+  --num: oklch(78% 0.01 258);
+  --nav-paper: oklch(100% 0 0 / 0.94);
+  --overlay: oklch(15% 0 0 / 0.55);
+  --accent-wash: oklch(52.68206% 0.1673571 258.0737 / 0.06);
+}
+html, body { overflow-x: clip; }
+.nav { background: var(--nav-paper); }
+.hero__photo img { filter: none; }
+.band { background: var(--surface); }
+.band__item { border-top-color: var(--line-2); }
+.band__num { color: var(--accent); }
+.band__item h3 { color: var(--text); }
+.band__item p:last-child { color: var(--text-2); }
+.stat__num, .chip, .m-summary, .m-meta dd, .m-impl li { color: var(--text); }
+.chip, .chips--static .chip:hover { border-color: var(--line-2); }
+.chip:hover, .chip:focus-visible { background: var(--accent-wash); }
+.chips--static .chip:hover { color: var(--text); }
+.modal__backdrop { background: var(--overlay); }
+.m-summary { background: var(--surface); border-color: var(--line-2); }

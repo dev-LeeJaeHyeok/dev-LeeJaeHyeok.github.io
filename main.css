@@ -1,0 +1,106 @@
+/* Main page: retain the original layout; match the detail pages' light palette. */
+:root {
+  color-scheme: light;
+  --bg: oklch(100% 0 0);
+  --surface: oklch(96% 0.002 70);
+  --line: oklch(92.95602% 0.0051928 247.8799);
+  --line-2: oklch(87.36939% 0.0087901 247.9266);
+  --text: oklch(23.74441% 0.0195228 258.3548);
+  --text-2: oklch(35.67758% 0.0278338 256.8231);
+  --text-3: oklch(50% 0.0254252 254.4895);
+  --text-4: oklch(56.15592% 0.0254252 254.4895);
+  --accent: oklch(52.68206% 0.1673571 258.0737);
+  --accent-deep: oklch(96% 0.014 258);
+  --num-lead: oklch(70% 0.015 258);
+  --num: oklch(78% 0.01 258);
+  --nav-paper: oklch(100% 0 0 / 0.94);
+  --overlay: oklch(15% 0 0 / 0.55);
+  --accent-wash: oklch(52.68206% 0.1673571 258.0737 / 0.06);
+  --home-section-title: 28px;
+  --home-project-title: 24px;
+  --home-item-title: 20px;
+  --home-body: 18px;
+  --home-meta: 16px;
+  --home-label: 14px;
+}
+html, body { overflow-x: clip; }
+.nav { background: var(--nav-paper); }
+.hero__photo img { filter: none; }
+.band { background: var(--surface); }
+.band__item { border-top-color: var(--line-2); }
+.band__num { color: var(--accent); }
+.band__item h3 { color: var(--text); }
+.band__item p:last-child { color: var(--text-2); }
+.stat__num, .chip, .m-summary, .m-meta dd, .m-impl li { color: var(--text); }
+.chip, .chips--static .chip:hover { border-color: var(--line-2); }
+.chip:hover, .chip:focus-visible { background: var(--accent-wash); }
+.chips--static .chip:hover { color: var(--text); }
+.modal__backdrop { background: var(--overlay); }
+.m-summary { background: var(--surface); border-color: var(--line-2); }
+
+/* Project cards approved in the preview; other main-page sections keep their layout. */
+#work { border-top: 1px solid var(--line-2); }
+#work .project-card { display: grid; grid-template-columns: 164px minmax(0, 1fr) 44px; gap: 26px; align-items: start; padding: 16px; margin-inline: -16px; color: inherit; text-decoration: none; cursor: pointer; }
+#work .project-card:hover { background: var(--surface); }
+#work .project-card:focus-visible { background: var(--surface); outline: 2px solid var(--accent); outline-offset: 3px; }
+#work .project-card:active { background: var(--line); }
+#work .project-card__image { width: 100%; height: 168px; object-fit: contain; background: var(--bg); border: 1px solid var(--line); }
+#work .project-card__body { min-width: 0; }
+#work .project-card__title { font-size: var(--home-project-title); font-weight: 700; line-height: 1.5; letter-spacing: -0.4px; }
+#work .project-card__title, #work .project-card p, #work .project-card li { word-break: keep-all; overflow-wrap: anywhere; }
+#work .project-card__role { margin-top: 6px; font-size: var(--home-meta); line-height: 1.7; color: var(--text-3); }
+#work .project-card__description { margin-top: 16px; max-width: 66ch; font-size: var(--home-body); line-height: 1.8; color: var(--text-2); }
+#work .project-card__results { list-style: disc; padding-left: 19px; margin-top: 14px; font-size: var(--home-body); line-height: 1.8; color: var(--text-2); }
+#work .project-card__results li + li { margin-top: 6px; }
+#work .project-card strong { color: var(--text); font-weight: 650; }
+#work .project-card__bottom { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: center; margin-top: 20px; max-width: 66ch; }
+#work .project-card__tech { display: flex; align-items: center; gap: 14px; list-style: none; padding: 0; }
+#work .project-card__tech li { display: flex; align-items: center; }
+#work .project-card__tech img { width: 25px; height: 25px; object-fit: contain; }
+#work .project-card__arrow { display: grid; place-items: center; width: 44px; height: 44px; align-self: center; color: var(--text-3); font-size: 30px; line-height: 1; }
+#work .project-card:hover .project-card__arrow, #work .project-card:focus-visible .project-card__arrow { color: var(--accent); }
+#work .project-card-divider { margin: 36px 0; border: 0; border-top: 1px solid var(--line); }
+#skills .chip:disabled { opacity: 1; cursor: default; color: var(--text); border-color: var(--line-2); background: none; }
+@media (max-width: 560px) {
+  #work .project-card { grid-template-columns: minmax(0, 1fr) 44px; column-gap: 12px; row-gap: 20px; }
+  #work .project-card__image { grid-column: 1 / -1; max-width: 320px; height: 188px; }
+  #work .project-card__body { grid-column: 1 / -1; grid-row: 2; }
+  #work .project-card__title { padding-inline-end: 56px; }
+  #work .project-card__arrow { grid-column: 2; grid-row: 2; align-self: start; }
+}
+
+/* One type scale across the main page; the layout and detail pages are unchanged. */
+main { font-size: var(--home-body); }
+.section__title { font-size: var(--home-section-title); line-height: 1.4; letter-spacing: -0.4px; }
+.hero__hello { font-size: clamp(44px, 5.6vw, 64px); line-height: 1.1; letter-spacing: -2px; }
+.hero__greet { font-size: 28px; line-height: 1.4; letter-spacing: -0.6px; }
+.hero__desc, .contact__msg { font-size: var(--home-body); line-height: 1.8; }
+.edu li { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 20px; align-items: start; padding-bottom: 20px; margin-bottom: 20px; }
+.edu__title { font-size: var(--home-item-title); line-height: 1.6; }
+.edu__meta { font-size: var(--home-meta); line-height: 1.7; }
+.edu__idx, .edu__date { font-size: var(--home-meta); line-height: 2; }
+.skills__cat { font-size: var(--home-label); line-height: 1.6; letter-spacing: 0.8px; }
+.chip { font-size: var(--home-meta); line-height: 1.5; }
+.chip__ico { width: 18px; height: 18px; }
+.chip__name { line-height: 1.5; }
+.exp__item { grid-template-columns: 176px minmax(0, 1fr); }
+.exp__org { font-size: var(--home-item-title); line-height: 1.6; }
+.exp__date, .exp__role { font-size: var(--home-meta); line-height: 1.8; }
+.exp__desc { font-size: var(--home-body); line-height: 1.8; }
+.contact__title { font-size: clamp(32px, 4.4vw, 44px); line-height: 1.2; letter-spacing: -1.2px; }
+.contact .section__eyebrow, .contact__links .k { font-size: var(--home-label); line-height: 1.6; }
+.contact__links a { font-size: var(--home-body); line-height: 1.6; }
+@media (max-width: 640px) {
+  :root {
+    --home-section-title: 24px;
+    --home-project-title: 22px;
+    --home-item-title: 19px;
+    --home-body: 17px;
+    --home-meta: 15px;
+  }
+  .hero__hello { font-size: clamp(28px, 9vw, 42px); letter-spacing: -1.2px; }
+  .hero__greet { font-size: clamp(15px, 4.4vw, 19px); letter-spacing: -0.4px; }
+  .edu li { grid-template-columns: 24px minmax(0, 1fr); column-gap: 12px; row-gap: 4px; }
+  .edu__date { grid-column: 2; }
+  .exp__item { grid-template-columns: minmax(0, 1fr); }
+}
