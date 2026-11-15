@@ -219,7 +219,7 @@
     <article aria-labelledby="project-title">
       <header>
         <div class="project-heading">
-          <a class="project-back" href="./index.html" aria-label="이전 페이지로 돌아가기">
+          <a class="project-back" href="../../index.html#work" aria-label="이전 페이지로 돌아가기">
             <span class="project-back__circle" aria-hidden="true"><i data-lucide="arrow-left"></i></span>
             <span>이전</span>
           </a>
@@ -355,7 +355,7 @@
                     </span>
                   </h6>
                   <ul>
-                    <li>외부망별 계약 쿼터와 처리 가능한 TPS를 반영한 가중치 알고리즘을 적용하고, 전송 단가를 고려해 라우팅하도록 개선하여 레거시 대비 처리량 약 26% 향상, 전송 비용 30% 절감</li>
+                    <li>Sender 큐별 처리량에 따른 가중치를 반영해 메시지를 정해진 비율로 순차 분배하도록 개선하여, 5,000 TPS 부하 테스트에서 메시지 처리 지연시간 p99 96.8% 단축</li>
                     <li>Spring AMQP 기반의 이벤트 소비 및 발행 기능 구현</li>
                   </ul>
                 </section>
@@ -461,11 +461,11 @@
             </ul>
           </section>
           <section class="integration-result" aria-labelledby="integration-result-routing-title">
-            <h4 class="integration-result__title" id="integration-result-routing-title">라우팅 개선으로 처리량 향상과 전송 비용 절감</h4>
+            <h4 class="integration-result__title" id="integration-result-routing-title">메시지 처리 지연시간 p99 96.8% 단축</h4>
             <ul>
-              <li>외부망 세션별 처리 가능한 TPS에 맞춰 물량을 배분하도록 변경해 레거시 대비 <strong>처리량 약 26% 향상</strong></li>
-              <li>계약 쿼터와 처리 가능량을 고려하고, 조건에 맞는 외부망 중 단가가 낮은 경로를 선택해 <strong>전송 비용 30% 절감</strong></li>
-              <li>기존 라우팅 정책 관리를 관리자 Web UI로 통합하여 운영팀의 코드 수정 업무 해소</li>
+              <li>처리량이 서로 다른 Sender 큐에 라운드로빈 방식으로 메시지를 균등 분배하여 저속 큐에 메시지가 적체되는 문제 확인</li>
+              <li>큐별 처리량에 따른 가중치를 반영하여 메시지를 정해진 비율로 순차 분배하도록 개선</li>
+              <li>5,000 TPS 부하 테스트에서 메시지 처리 지연시간 <strong>p95 92.89초 → 2.84초</strong>, <strong>p99 133.27초 → 4.23초</strong>로 단축</li>
             </ul>
           </section>
           <section class="integration-result" aria-labelledby="integration-result-support-title">
