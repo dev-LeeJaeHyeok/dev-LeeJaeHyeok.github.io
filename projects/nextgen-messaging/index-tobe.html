@@ -500,7 +500,7 @@
         </section>
         <section class="case-part case-block" aria-labelledby="task-queue-results-title">
           <h3 id="task-queue-results-title">03. 성능 검증 및 결과</h3>
-          <p>200개 Queue에 서로 다른 처리 능력을 설정하고, 기존 Round Robin과 가중치 기반 분배 방식의 성능을 Route Server(분배 서버)와 소비 서버를 기준으로 테스트하였습니다.</p>
+          <p>200개 Queue에 서로 다른 처리 능력을 설정하고, 기존 Round Robin과 가중치 기반 분배 방식의 성능을 Router(분배 서버)와 소비 서버를 기준으로 테스트하였습니다.</p>
           <p>Queue별 처리 능력은 10~40 TPS, 전체 처리 능력은 5,050 TPS로 설정하고, 2,000 / 3,000 / 5,000 TPS의 메시지를 각각 120초 동안 발생시켜 조건별 5회 반복 측정을 통해 처리량과 지연시간을 비교했습니다.</p>
           <p>이벤트 발행 종료 후에도 남아 있는 메시지가 모두 처리될 때까지 추적해 지연시간을 집계했습니다.</p>
           <section class="solution-subsection" aria-labelledby="task-queue-throughput-title">
