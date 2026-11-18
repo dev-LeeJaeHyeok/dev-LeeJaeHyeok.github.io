@@ -124,6 +124,15 @@
       .benchmark-case .benchmark-metrics th:first-child { width: 36%; }
       .benchmark-run__title { font-size: 20px; }
     }
+    .task-queue-case .task-queue-example {
+      padding: var(--space-sm);
+      border-inline-start: 2px solid var(--color-divider);
+      background: var(--color-case-heading-surface);
+    }
+    .task-queue-case .solution-topic__body { margin-inline: 12px; }
+    @media (max-width: 600px) {
+      .task-queue-case .benchmark-metrics thead th:not(:first-child) { white-space: normal; }
+    }
     .cicd-case .solution-topic + .solution-topic { margin-top: var(--space-xl); }
     .case-table { width: 100%; margin-top: var(--space-sm); border-collapse: collapse; text-align: left; }
     .case-table th, .case-table td { padding: 12px 14px; border-bottom: 1px solid var(--color-rule); vertical-align: top; overflow-wrap: anywhere; }
@@ -470,7 +479,7 @@
         </section>
       </section>
 
-      <section class="project-case" aria-labelledby="task-queue-routing-title">
+      <section class="project-case benchmark-case task-queue-case" aria-labelledby="task-queue-routing-title">
         <div class="case-heading">
           <h2 id="task-queue-routing-title">Task Queue 메시지 처리 지연시간 p99 96.8% 단축</h2>
         </div>
@@ -478,32 +487,36 @@
         <section class="case-part case-block" aria-labelledby="task-queue-problem-title">
           <h3 id="task-queue-problem-title">01. 문제</h3>
           <p>기존 메시지 분배 서버는 Round Robin 방식으로 Sender Queue에 메시지를 균등하게 전달했습니다. 하지만 각 Queue의 Consumer마다 처리할 수 있는 TPS가 달라, 동일한 물량을 배정할 경우 일부 Queue에 메시지가 적체되는 문제가 있었습니다.</p>
-          <p>예를 들어 처리 능력이 10~40 TPS인 Queue 200개에 초당 3,000건을 균등하게 분배하면 Queue마다 15건의 메시지가 전달됩니다. 이때 10 TPS Queue에는 초당 5건씩 메시지가 쌓이는 반면, 40 TPS Queue는 처리 능력의 일부만 사용하게 됩니다.</p>
+          <p class="task-queue-example">예를 들어 처리 능력이 10~40 TPS인 Queue 200개에 초당 3,000건을 균등하게 분배하면 Queue마다 15건의 메시지가 전달됩니다. 이때 10 TPS Queue에는 초당 5건씩 메시지가 쌓이는 반면, 40 TPS Queue는 처리 능력의 일부만 사용하게 됩니다.</p>
           <p>전체 Queue의 처리 능력에는 여유가 있지만, 저속 Queue의 메시지 적체가 계속 늘어나면서 처리 지연이 길어지는 구조였습니다.</p>
           <p>따라서 <strong>문제의 원인은 Queue의 개수나 전체 처리 능력이 아닌, 개별 Queue의 처리 능력을 고려하지 않는 균등 분배 방식</strong>에 있다고 판단했습니다.</p>
         </section>
         <section class="case-part case-block" aria-labelledby="task-queue-solution-title">
           <h3 id="task-queue-solution-title">02. 해결 과정</h3>
-          <section class="solution-subsection" aria-labelledby="task-queue-weighted-routing-title">
-            <h4 class="integration-result__title" id="task-queue-weighted-routing-title">처리 능력을 고려한 가중치 기반 로드 밸런싱</h4>
-            <p>모든 Queue에 동일한 물량을 배정하는 대신, 각 Queue가 처리할 수 있는 TPS에 비례해 메시지를 분배하는 방향으로 접근했습니다.</p>
-            <p>처리 능력이 높은 Queue에 더 많은 메시지를 전달하고, 저속 Queue에는 상대적으로 적은 물량을 배정하면 특정 Queue에서 발생하는 메시지 적체를 줄일 수 있기 때문입니다.</p>
-            <p>이를 위해 <strong>Queue별 최대 처리 TPS를 가중치로 사용하는 Weighted Round Robin </strong>방식을 선택했습니다.</p>
-          </section>
-          <section class="solution-subsection" aria-labelledby="task-queue-wrr-title">
-            <h4 class="integration-result__title" id="task-queue-wrr-title">Routing Key 배열을 활용한 WRR 구현</h4>
-            <p>각 Queue의 Routing Key와 가중치를 DB에 저장하고, 서버 초기화 시 해당 정보를 조회해 메모리에 분배 순서를 구성했습니다.</p>
-            <p><strong>각 Routing Key를 가중치만큼 <code>String[]</code> 배열에 저장</strong>하는 방식으로, 처리 능력이 10, 20, 40 TPS인 Queue라면 배열에 각 Routing Key를 10개, 20개, 40개씩 배치했습니다.</p>
-            <p>메시지가 들어올 때마다 배열의 Index를 하나씩 이동하며 Routing Key를 선택하고, 마지막 Index에 도달하면 처음부터 다시 순회하도록 구현했습니다. 이를 통해 70건의 메시지 중 각 Queue에 10건, 20건, 40건이 전달되도록 분배 비율을 유지했습니다.</p>
-            <p>가중치에 따른 분배 순서를 메모리에 구성해 두었기 때문에 <strong>메시지마다 DB를 조회하거나 전체 Queue를 탐색하지 않고도 O(1)의 비용으로 전송 대상을 선택</strong>할 수 있도록 했습니다.</p>
-          </section>
+          <div class="solution-topic__body">
+            <section class="solution-subsection" aria-labelledby="task-queue-weighted-routing-title">
+              <h4 class="solution-subsection__title" id="task-queue-weighted-routing-title">처리 능력을 고려한 가중치 기반 로드 밸런싱</h4>
+              <p>모든 Queue에 동일한 물량을 배정하는 대신, 각 Queue가 처리할 수 있는 TPS에 비례해 메시지를 분배하는 방향으로 접근했습니다.</p>
+              <p>처리 능력이 높은 Queue에 더 많은 메시지를 전달하고, 저속 Queue에는 상대적으로 적은 물량을 배정하면 특정 Queue에서 발생하는 메시지 적체를 줄일 수 있기 때문입니다.</p>
+              <p>이를 위해 <strong>Queue별 최대 처리 TPS를 가중치로 사용하는 Weighted Round Robin </strong>방식을 선택했습니다.</p>
+            </section>
+            <section class="solution-subsection" aria-labelledby="task-queue-wrr-title">
+              <h4 class="solution-subsection__title" id="task-queue-wrr-title">Routing Key 배열을 활용한 WRR 구현</h4>
+              <ol class="deployment-steps">
+                <li>각 Queue의 Routing Key와 가중치를 DB에 저장하고, 서버 초기화 시 해당 정보를 조회해 메모리에 분배 순서를 구성했습니다.</li>
+                <li><strong>각 Routing Key를 가중치만큼 <code>String[]</code> 배열에 저장</strong>하는 방식으로, 처리 능력이 10, 20, 40 TPS인 Queue라면 배열에 각 Routing Key를 10개, 20개, 40개씩 배치했습니다.</li>
+                <li>메시지가 들어올 때마다 배열의 Index를 하나씩 이동하며 Routing Key를 선택하고, 마지막 Index에 도달하면 처음부터 다시 순회하도록 구현했습니다. 이를 통해 70건의 메시지 중 각 Queue에 10건, 20건, 40건이 전달되도록 분배 비율을 유지했습니다.</li>
+              </ol>
+              <p class="benchmark-intro">가중치에 따른 분배 순서를 메모리에 구성해 두었기 때문에 <strong>메시지마다 DB를 조회하거나 전체 Queue를 탐색하지 않고도 O(1)의 비용으로 전송 대상을 선택</strong>할 수 있도록 했습니다.</p>
+            </section>
+          </div>
         </section>
-        <section class="case-part case-block" aria-labelledby="task-queue-results-title">
+        <section class="case-part case-block integration-results" aria-labelledby="task-queue-results-title">
           <h3 id="task-queue-results-title">03. 성능 검증 및 결과</h3>
           <p>200개 Queue에 서로 다른 처리 능력을 설정하고, 기존 Round Robin과 가중치 기반 분배 방식의 성능을 Router(분배 서버)와 소비 서버를 기준으로 테스트하였습니다.</p>
           <p>Queue별 처리 능력은 10~40 TPS, 전체 처리 능력은 5,050 TPS로 설정하고, 2,000 / 3,000 / 5,000 TPS의 메시지를 각각 120초 동안 발생시켜 조건별 5회 반복 측정을 통해 처리량과 지연시간을 비교했습니다.</p>
           <p>이벤트 발행 종료 후에도 남아 있는 메시지가 모두 처리될 때까지 추적해 지연시간을 집계했습니다.</p>
-          <section class="solution-subsection" aria-labelledby="task-queue-throughput-title">
+          <section class="solution-subsection benchmark-run" aria-labelledby="task-queue-throughput-title">
             <h4 class="benchmark-run__title" id="task-queue-throughput-title">메시지 완료 처리량</h4>
             <table class="case-table benchmark-metrics" aria-labelledby="task-queue-throughput-title">
               <thead>
@@ -512,11 +525,11 @@
               <tbody>
                 <tr><th scope="row">2,000</th><td>2,000 TPS</td><td>2,001 TPS</td></tr>
                 <tr><th scope="row">3,000</th><td>2,917 TPS</td><td>3,001 TPS</td></tr>
-                <tr><th scope="row">5,000</th><td>4,294 TPS</td><td>4,975 TPS</td></tr>
+                <tr><th scope="row">5,000</th><td>4,294 TPS</td><td class="benchmark-better">4,975 TPS</td></tr>
               </tbody>
             </table>
           </section>
-          <section class="solution-subsection" aria-labelledby="task-queue-latency-title">
+          <section class="solution-subsection benchmark-run" aria-labelledby="task-queue-latency-title">
             <h4 class="benchmark-run__title" id="task-queue-latency-title">p99 처리 지연시간</h4>
             <table class="case-table benchmark-metrics" aria-labelledby="task-queue-latency-title">
               <thead>
@@ -525,23 +538,23 @@
               <tbody>
                 <tr><th scope="row">2,000</th><td>2.075초</td><td>0.241초</td></tr>
                 <tr><th scope="row">3,000</th><td>39.08초</td><td>0.314초</td></tr>
-                <tr><th scope="row">5,000</th><td>133.27초</td><td>4.23초</td></tr>
+                <tr><th scope="row">5,000</th><td>133.27초</td><td class="benchmark-better">4.23초</td></tr>
               </tbody>
             </table>
           </section>
           <p class="benchmark-intro">2,000 TPS에서는 두 방식의 완료 처리량이 비슷했지만, 일부 저속 Queue의 적체로 인해 처리 지연시간에는 차이가 나타났습니다.</p>
           <p>입력 부하를 3,000 TPS로 높이자 Round Robin의 p99 지연시간은 39.08초까지 증가했습니다. 반면 가중치 기반 분배는 Queue별 처리 능력에 맞춰 메시지를 전달하면서 <strong>0.314초의 p99 지연시간</strong>을 기록했습니다.</p>
           <p>5,000 TPS에서는 전체 Queue의 처리 능력에 근접하면서 두 방식 모두 적체가 발생했으나, 가중치 기반 분배가 더 높은 완료 처리량과 낮은 지연시간을 보였습니다.</p>
-          <section class="solution-subsection" aria-labelledby="task-queue-summary-title">
+          <section class="solution-subsection integration-result" aria-labelledby="task-queue-summary-title">
             <h4 class="integration-result__title" id="task-queue-summary-title">5,000 TPS 기준 주요 결과</h4>
             <ul>
-              <li><strong>완료 처리량 15.9% 향상</strong> — 4,294 → 4,975 TPS</li>
-              <li><strong>p95 지연시간 96.9% 감소</strong> — 92.89 → 2.84초</li>
-              <li><strong>p99 지연시간 96.8% 감소</strong> — 133.27 → 4.23초</li>
-              <li><strong>발행 종료 시점 대기 메시지 93.0% 감소</strong> — 85,666 → 6,036건</li>
+              <li><strong>완료 처리량 15.9% 향상</strong> <span class="benchmark-value">— 4,294 → 4,975 TPS</span></li>
+              <li><strong>p95 지연시간 96.9% 감소</strong> <span class="benchmark-value">— 92.89 → 2.84초</span></li>
+              <li><strong>p99 지연시간 96.8% 감소</strong> <span class="benchmark-value">— 133.27 → 4.23초</span></li>
+              <li><strong>발행 종료 시점 대기 메시지 93.0% 감소</strong> <span class="benchmark-value">— 85,666 → 6,036건</span></li>
             </ul>
-            <p class="benchmark-intro">전체 Queue의 처리 능력을 늘리지 않고도, <strong>각 Consumer의 처리 능력에 맞게 메시지를 분배하는 것이 시스템 전체의 처리량과 지연시간에 미치는 영향</strong>을 확인할 수 있었습니다.</p>
           </section>
+          <p class="benchmark-intro">전체 Queue의 처리 능력을 늘리지 않고도, <strong>각 Consumer의 처리 능력에 맞게 메시지를 분배하는 것이 시스템 전체의 처리량과 지연시간에 미치는 영향</strong>을 확인할 수 있었습니다.</p>
         </section>
       </section>
 
