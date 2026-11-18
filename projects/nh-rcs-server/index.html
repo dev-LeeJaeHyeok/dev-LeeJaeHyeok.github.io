@@ -350,7 +350,7 @@
         <div class="backend-services">
           <section class="backend-service" aria-labelledby="receiver-title">
             <h3 class="backend-service__title" id="receiver-title">Receiver<span class="backend-service__icons"><img src="../../assets/img/logos/java.svg" alt="Java" title="Java" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/spring.svg" alt="Spring Boot" title="Spring Boot" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/netty.svg" alt="Netty" title="Netty" width="20" height="20" loading="lazy" decoding="async"><img src="../../assets/img/logos/rabbitmq.svg" alt="Spring AMQP, RabbitMQ" title="Spring AMQP, RabbitMQ" width="20" height="20" loading="lazy" decoding="async"></span></h3>
-            <p>고객사에 RCS 문자 전송 요청을 받기위한 TCP서버로 입니다.</p>
+            <p>고객사에 RCS 문자 전송 요청을 받기위한 TCP서버 입니다.</p>
         <ul>
             <li>Netty 프레임워크를 사용하여 전문 타입별 바이너리 처리부터 이벤트 발행 흐름까지 구현</li>
             <li>농협측 운영팀과의 기능, 성능, 장애 테스트를 수행하여 기준 통과</li>
@@ -361,7 +361,7 @@
             <p>이동통신사에서 제공하는 RCS API를 호출하는 전송 클라이언트 개발</p>
           <ul>
               <li>이동 통신사 RCS 처리 RESTful API 연동 </li>
-              <li>HTTP 클라이언트에서 발생할 수 있는 모든 예외처리 적용으로 운영기간 <strong>장애율 0%</strong></li>
+              <li>HTTP 클라이언트에서 발생할 수 있는 통신사 RCS API 호출 시 연결 실패, 응답 시간 초과 등 오류 유형별 예외 처리 구현</li>
               <li>통신사 API 호출 시 연결 실패, 응답 시간 초과 등 HTTP 클라이언트에서 발생할 수 있는 응답을 명확하게 구분하여, 각 상황에 맞는 예외처리를 구현하였습니다.</li>
           </ul>
           </section>

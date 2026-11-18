@@ -255,7 +255,7 @@
 
       <section class="case-part" aria-labelledby="overview-title">
         <h2 id="overview-title">개요</h2>
-        <p class="project-summary">약 300개 고객사가 이용하는 B2B 플랫폼으로, 월 N천만 건의 SMS, LMS, MMS, RCS, 알림톡을 처리하는 서비스입니다. 20년간 운영되어 온 레거시 시스템을 전면 개편하는 프로젝트로, C, Java, Python으로 나뉘어 운영되던 시스템을 Java와 Spring Cloud 기반의 MSA 재설계와 백엔드 서버 개발과 CI/CD 파이프라인을 구축 했습니다.</p>
+        <p class="project-summary">약 300개 고객사가 이용하는 B2B 플랫폼으로, 월 최대 9천만 건의 SMS, LMS, MMS, RCS, 알림톡을 처리하는 서비스입니다. 20년간 운영되어 온 레거시 시스템을 전면 개편하는 프로젝트로, C, Java, Python으로 나뉘어 운영되던 시스템을 Java와 Spring Cloud 기반의 MSA로 재설계했습니다. 레거시 분석과 요구사항 정리부터 백엔드 개발, 배포와 운영 체계 구축까지 담당했습니다.</p>
         <figure class="case-figure">
           <figcaption class="m-fig-label">차세대 아키텍처</figcaption>
           <button class="figure-zoom" type="button" data-zoom="../../assets/img/project/nextgen-messaging-platform/arch-nextgen.png" aria-label="기존 레거시 아키텍처 크게 보기" title="구성도 크게 보기">
@@ -336,11 +336,11 @@
                       <img src="../../assets/img/logos/rabbitmq.svg" alt="RabbitMQ" title="RabbitMQ" width="20" height="20" loading="lazy" decoding="async">
                     </span>
                   </h6>
-                  <p>고객사의 문자 발송 요청을 접수하는 RESTful API 서버를 개발했습니다.</p>
+                  <p>고객사의 문자 발송 요청을 접수하는 RESTful API 서버를 개발했습니다. 문자 발송 요청과 비동기 결과 전달 흐름은 특정 고객사를 제외하면 각각 100 TPS 미만이어서, HTTP 1.1로 처리할 수 있다고 판단했습니다.</p>
                   <ul>
                     <li>SMS, LMS, MMS, RCS, 알림톡의 유형별 발송 API 설계 및 개발</li>
-                    <li>Jakarta Bean Validation 어노테이션을 활용한 문자 유형별 요청 규격 검사</li>
-                    <li>Redis SET NX를 활용한 메시지 중복 요청 검사</li>
+                    <li>Jakarta Bean Validation과 Custom Validator를 활용한 문자 유형별 요청 데이터 검증</li>
+                    <li>Redis SET NX 기반 멱등키로 동일 요청의 중복 접수 차단</li>
                     <li>발송 요청을 내부 서비스에 전달하기 위해 Spring AMQP 기반의 RabbitMQ 이벤트 발행 기능 구현</li>
                     <li>@RestControllerAdvice와 @ExceptionHandler를 활용해 요청 처리 중 발생하는 예외를 공통으로 처리하는 전역 예외 처리기 구현</li>
                   </ul>
@@ -385,7 +385,7 @@
                   </h6>
                   <p>문자 발송 요청, 외부망 접수, 최종 처리 결과를 기록하는 서버를 개발했습니다.</p>
                   <ul>
-                    <li>비동기 환경에서 이력 생성보다 갱신 이벤트가 먼저 도착하는 상황을 고려해, 서버의 예외 처리 대신 Upsert를 적용한 R2DBC 기반의 Non-Blocking 이력 저장 및 갱신 기능 구현</li>
+                    <li>비동기 이벤트의 이력을 반영하기 위해 상태 관리 컬럼을 활용한 조건부 갱신과 Upsert 적용. DB I/O는 R2DBC로 Non-Blocking 처리</li>
                     <li>Spring AMQP 기반의 이벤트 소비 기능 구현</li>
                   </ul>
                 </section>
@@ -402,7 +402,7 @@
                     <li>파일 업로드, 다운로드, 조회 API 설계 및 개발</li>
                     <li>첨부파일 바이너리로 인한 RabbitMQ의 부하를 줄이기 위해, 파일은 Storage에 저장하고 이벤트에는 파일 식별 Key만 전달하는 Claim Check Pattern 적용</li>
                     <li>동일한 파일이 반복 업로드될 때 중복 저장을 방지하기 위해 파일명, 확장자, MD5 해시값을 비교하는 검증 로직 구현</li>
-                    <li>파일 다운로드 과정에서 발생하는 메모리 복사와 CPU 부하를 줄이기 위해 Zero-Copy 적용</li>
+                    <li>Backpressure 기반 스트리밍으로 대용량 파일 전체를 메모리에 올리지 않고 전송하도록 구현</li>
                   </ul>
                 </section>
                 <section class="backend-service" aria-labelledby="oauth-server-title">
@@ -414,7 +414,7 @@
                       <img src="../../assets/img/logos/r2dbc.svg" alt="R2DBC" title="R2DBC" width="20" height="20" loading="lazy" decoding="async">
                     </span>
                   </h6>
-                  <p>문자 서비스 API를 사용하기위해 토큰을 관리하는 인증 서버입니다.</p>
+                  <p>회원과 Admin의 인증 API를 제공하고, 문자 서비스 API 사용에 필요한 토큰을 관리하는 서버입니다.</p>
                   <ul>
                     <li>Spring Security와 RSA 비대칭키 서명 기반의 JWT 인증 체계 구축</li>
                     <li>Redis 기반 Refresh Token 저장소 구성 및 토큰 갱신 설계</li>
@@ -460,14 +460,6 @@
               <li>플랫폼 통합 후 레거시 시스템을 정리하면서 하드웨어 <strong>102대 -> 23대</strong> 79대 감축</li>
             </ul>
           </section>
-          <section class="integration-result" aria-labelledby="integration-result-routing-title">
-            <h4 class="integration-result__title" id="integration-result-routing-title">메시지 처리 지연시간 p99 96.8% 단축</h4>
-            <ul>
-              <li>처리량이 서로 다른 Sender 큐에 라운드로빈 방식으로 메시지를 균등 분배하여 저속 큐에 메시지가 적체되는 문제 확인</li>
-              <li>큐별 처리량에 따른 가중치를 반영하여 메시지를 정해진 비율로 순차 분배하도록 개선</li>
-              <li>5,000 TPS 부하 테스트에서 메시지 처리 지연시간 <strong>p95 92.89초 → 2.84초</strong>, <strong>p99 133.27초 → 4.23초</strong>로 단축</li>
-            </ul>
-          </section>
           <section class="integration-result" aria-labelledby="integration-result-support-title">
             <h4 class="integration-result__title" id="integration-result-support-title">REST API 제공으로 고객사 연동 지원 업무 개선</h4>
             <ul>
@@ -478,11 +470,87 @@
         </section>
       </section>
 
+      <section class="project-case" aria-labelledby="task-queue-routing-title">
+        <div class="case-heading">
+          <h2 id="task-queue-routing-title">Task Queue 메시지 처리 지연시간 p99 96.8% 단축</h2>
+        </div>
+        <p class="benchmark-intro">처리 능력이 서로 다른 Sender Queue에 메시지를 균등하게 분배하던 방식을 개선했습니다. Queue별 처리 TPS를 가중치로 사용하는 가중치 Round Robin을 적용해 메시지 적체를 줄이고, 전체 처리량과 지연시간을 개선하는 방향으로 분배 구조를 변경했습니다.</p>
+        <section class="case-part case-block" aria-labelledby="task-queue-problem-title">
+          <h3 id="task-queue-problem-title">01. 문제</h3>
+          <p>기존 메시지 분배 서버는 Round Robin 방식으로 Sender Queue에 메시지를 균등하게 전달했습니다. 하지만 각 Queue의 Consumer마다 처리할 수 있는 TPS가 달라, 동일한 물량을 배정할 경우 일부 Queue에 메시지가 적체되는 문제가 있었습니다.</p>
+          <p>예를 들어 처리 능력이 10~40 TPS인 Queue 200개에 초당 3,000건을 균등하게 분배하면 Queue마다 15건의 메시지가 전달됩니다. 이때 10 TPS Queue에는 초당 5건씩 메시지가 쌓이는 반면, 40 TPS Queue는 처리 능력의 일부만 사용하게 됩니다.</p>
+          <p>전체 Queue의 처리 능력에는 여유가 있지만, 저속 Queue의 메시지 적체가 계속 늘어나면서 처리 지연이 길어지는 구조였습니다.</p>
+          <p>따라서 <strong>문제의 원인은 Queue의 개수나 전체 처리 능력이 아닌, 개별 Queue의 처리 능력을 고려하지 않는 균등 분배 방식</strong>에 있다고 판단했습니다.</p>
+        </section>
+        <section class="case-part case-block" aria-labelledby="task-queue-solution-title">
+          <h3 id="task-queue-solution-title">02. 해결 과정</h3>
+          <section class="solution-subsection" aria-labelledby="task-queue-weighted-routing-title">
+            <h4 class="integration-result__title" id="task-queue-weighted-routing-title">처리 능력을 고려한 가중치 기반 로드 밸런싱</h4>
+            <p>모든 Queue에 동일한 물량을 배정하는 대신, 각 Queue가 처리할 수 있는 TPS에 비례해 메시지를 분배하는 방향으로 접근했습니다.</p>
+            <p>처리 능력이 높은 Queue에 더 많은 메시지를 전달하고, 저속 Queue에는 상대적으로 적은 물량을 배정하면 특정 Queue에서 발생하는 메시지 적체를 줄일 수 있기 때문입니다.</p>
+            <p>이를 위해 <strong>Queue별 최대 처리 TPS를 가중치로 사용하는 Weighted Round Robin </strong>방식을 선택했습니다.</p>
+          </section>
+          <section class="solution-subsection" aria-labelledby="task-queue-wrr-title">
+            <h4 class="integration-result__title" id="task-queue-wrr-title">Routing Key 배열을 활용한 WRR 구현</h4>
+            <p>각 Queue의 Routing Key와 가중치를 DB에 저장하고, 서버 초기화 시 해당 정보를 조회해 메모리에 분배 순서를 구성했습니다.</p>
+            <p><strong>각 Routing Key를 가중치만큼 <code>String[]</code> 배열에 저장</strong>하는 방식으로, 처리 능력이 10, 20, 40 TPS인 Queue라면 배열에 각 Routing Key를 10개, 20개, 40개씩 배치했습니다.</p>
+            <p>메시지가 들어올 때마다 배열의 Index를 하나씩 이동하며 Routing Key를 선택하고, 마지막 Index에 도달하면 처음부터 다시 순회하도록 구현했습니다. 이를 통해 70건의 메시지 중 각 Queue에 10건, 20건, 40건이 전달되도록 분배 비율을 유지했습니다.</p>
+            <p>가중치에 따른 분배 순서를 메모리에 구성해 두었기 때문에 <strong>메시지마다 DB를 조회하거나 전체 Queue를 탐색하지 않고도 O(1)의 비용으로 전송 대상을 선택</strong>할 수 있도록 했습니다.</p>
+          </section>
+        </section>
+        <section class="case-part case-block" aria-labelledby="task-queue-results-title">
+          <h3 id="task-queue-results-title">03. 성능 검증 및 결과</h3>
+          <p>200개 Queue에 서로 다른 처리 능력을 설정하고, 기존 Round Robin과 가중치 기반 분배 방식의 성능을 Route Server(분배 서버)와 소비 서버를 기준으로 테스트하였습니다.</p>
+          <p>Queue별 처리 능력은 10~40 TPS, 전체 처리 능력은 5,050 TPS로 설정하고, 2,000 / 3,000 / 5,000 TPS의 메시지를 각각 120초 동안 발생시켜 조건별 5회 반복 측정을 통해 처리량과 지연시간을 비교했습니다.</p>
+          <p>이벤트 발행 종료 후에도 남아 있는 메시지가 모두 처리될 때까지 추적해 지연시간을 집계했습니다.</p>
+          <section class="solution-subsection" aria-labelledby="task-queue-throughput-title">
+            <h4 class="benchmark-run__title" id="task-queue-throughput-title">메시지 완료 처리량</h4>
+            <table class="case-table benchmark-metrics" aria-labelledby="task-queue-throughput-title">
+              <thead>
+                <tr><th scope="col">부하 TPS</th><th scope="col">Round Robin</th><th scope="col">Weighted Routing</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">2,000</th><td>2,000 TPS</td><td>2,001 TPS</td></tr>
+                <tr><th scope="row">3,000</th><td>2,917 TPS</td><td>3,001 TPS</td></tr>
+                <tr><th scope="row">5,000</th><td>4,294 TPS</td><td>4,975 TPS</td></tr>
+              </tbody>
+            </table>
+          </section>
+          <section class="solution-subsection" aria-labelledby="task-queue-latency-title">
+            <h4 class="benchmark-run__title" id="task-queue-latency-title">p99 처리 지연시간</h4>
+            <table class="case-table benchmark-metrics" aria-labelledby="task-queue-latency-title">
+              <thead>
+                <tr><th scope="col">부하 TPS</th><th scope="col">Round Robin</th><th scope="col">Weighted Routing</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">2,000</th><td>2.075초</td><td>0.241초</td></tr>
+                <tr><th scope="row">3,000</th><td>39.08초</td><td>0.314초</td></tr>
+                <tr><th scope="row">5,000</th><td>133.27초</td><td>4.23초</td></tr>
+              </tbody>
+            </table>
+          </section>
+          <p class="benchmark-intro">2,000 TPS에서는 두 방식의 완료 처리량이 비슷했지만, 일부 저속 Queue의 적체로 인해 처리 지연시간에는 차이가 나타났습니다.</p>
+          <p>입력 부하를 3,000 TPS로 높이자 Round Robin의 p99 지연시간은 39.08초까지 증가했습니다. 반면 가중치 기반 분배는 Queue별 처리 능력에 맞춰 메시지를 전달하면서 <strong>0.314초의 p99 지연시간</strong>을 기록했습니다.</p>
+          <p>5,000 TPS에서는 전체 Queue의 처리 능력에 근접하면서 두 방식 모두 적체가 발생했으나, 가중치 기반 분배가 더 높은 완료 처리량과 낮은 지연시간을 보였습니다.</p>
+          <section class="solution-subsection" aria-labelledby="task-queue-summary-title">
+            <h4 class="integration-result__title" id="task-queue-summary-title">5,000 TPS 기준 주요 결과</h4>
+            <ul>
+              <li><strong>완료 처리량 15.9% 향상</strong> — 4,294 → 4,975 TPS</li>
+              <li><strong>p95 지연시간 96.9% 감소</strong> — 92.89 → 2.84초</li>
+              <li><strong>p99 지연시간 96.8% 감소</strong> — 133.27 → 4.23초</li>
+              <li><strong>발행 종료 시점 대기 메시지 93.0% 감소</strong> — 85,666 → 6,036건</li>
+            </ul>
+            <p class="benchmark-intro">전체 Queue의 처리 능력을 늘리지 않고도, <strong>각 Consumer의 처리 능력에 맞게 메시지를 분배하는 것이 시스템 전체의 처리량과 지연시간에 미치는 영향</strong>을 확인할 수 있었습니다.</p>
+          </section>
+        </section>
+      </section>
+
       <section class="project-case benchmark-case" aria-labelledby="benchmark-title">
         <div class="case-heading">
           <h2 id="benchmark-title">MVC와 WebFlux 성능 비교</h2>
         </div>
-        <p class="benchmark-intro">클라이언트에게 제공되는 문자 발송 API는 요청을 받아 이벤트를 생성하는 과정에서 Redis, DB, RabbitMQ에 대한 외부 I/O가 발생합니다. 이 흐름에서 대용량 트래픽을 처리할 때 어떤 프레임워크가 더 높은 처리량과 빠른 응답속도를 확보할 수 있는 지 Spring Webflux와 Spring MVC를 비교하는 부하 테스트를 진행하였습니다.</p>
+        <p class="benchmark-intro">운영 피크 시간대의 전체 트래픽은 약 5,000 TPS였습니다. </p>
+        <p class="benchmark-intro">클라이언트에게 제공되는 문자 발송 API는 요청을 받아 이벤트를 생성하는 과정에서 Redis, DB, RabbitMQ에 대한 외부 I/O가 발생합니다. 이 흐름에서 대용량 트래픽을 처리할 때 처리량과 응답시간을 비교하기 위해 Spring WebFlux와 Spring MVC로 부하 테스트를 진행했습니다.</p>
         <section class="case-part case-block" aria-labelledby="benchmark-environment-title">
           <h3 id="benchmark-environment-title">테스트 환경</h3>
           <figure class="case-figure">
@@ -636,9 +704,10 @@
                   </li>
                   <li>
                     <h6 class="deployment-steps__title">정상 기동 확인 후 다음 인스턴스 배포</h6>
-                    <p>Shell script로 프로세스 실행 여부를 확인하고, Actuator health API가 <code>UP</code>인지 점검했습니다. 새 버전이 정상적으로 기동되어 안정화되면 다음 인스턴스에 배포하고, 상태 확인에 실패하면 나머지 인스턴스의 배포를 중단하도록 구성했습니다.</p>
+                    <p>Shell script로 프로세스 실행 여부를 확인하고, Actuator health API가 <code>UP</code>인지 점검했습니다. Eureka REST API로 Discovery 등록 상태도 검증했습니다. 새 버전이 정상적으로 기동되어 안정화되면 다음 인스턴스에 배포하고, 상태 확인에 실패하면 나머지 인스턴스의 배포를 중단하도록 구성했습니다.</p>
                   </li>
                 </ol>
+                <p class="deployment-notice">Admin API로 IDC 서버별 배포 현황을 동기화했습니다.</p>
                 <p class="deployment-notice">배포 성공과 실패 결과는 Slack으로 전달하고, 상태 확인에 실패한 경우 해당 시점의 로그도 함께 전송했습니다.</p>
                 <p>배포 실패 시 담당자가 Git 태그를 지정해 rollback workflow를 실행하면, 해당 버전의 소스를 다시 빌드해 배포하도록 구성했습니다.</p>
               </section>

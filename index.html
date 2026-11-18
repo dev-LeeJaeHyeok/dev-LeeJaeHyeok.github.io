@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이재혁 · Backend Engineer</title>
+<title>이재혁, Backend Engineer</title>
 <meta name="description" content="4년 차 백엔드 엔지니어 이재혁. 대용량 메시징 플랫폼 설계와 성능 개선.">
-<meta property="og:title" content="이재혁 · Backend Engineer">
+<meta property="og:title" content="이재혁, Backend Engineer">
 <meta property="og:description" content="4년 차 백엔드 엔지니어. 대용량 메시징 플랫폼 설계와 성능 개선.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -34,6 +34,7 @@
     <li><a href="#top" data-target="top"><span class="toc__dot"></span>Intro</a></li>
     <li><a href="#work" data-target="work"><span class="toc__dot"></span>Work</a></li>
     <li><a href="#skills" data-target="skills"><span class="toc__dot"></span>Skills</a></li>
+    <li><a href="#approach" data-target="approach"><span class="toc__dot"></span>개발 방식</a></li>
     <li><a href="#experience" data-target="experience"><span class="toc__dot"></span>Experience</a></li>
     <li><a href="#education" data-target="education"><span class="toc__dot"></span>Education</a></li>
     <li><a href="#contact" data-target="contact"><span class="toc__dot"></span>Contact</a></li>
@@ -71,11 +72,11 @@
 <!--          <div class="band__item">-->
 <!--            <p class="band__num">02</p>-->
 <!--            <h3>대용량 메시징</h3>-->
-<!--            <p>비동기 파이프라인과 유실 방지·재처리 흐름을 고려한 메시지 처리</p>-->
+<!--            <p>비동기 파이프라인과 유실 방지, 재처리 흐름을 고려한 메시지 처리</p>-->
 <!--          </div>-->
 <!--          <div class="band__item">-->
 <!--            <p class="band__num">03</p>-->
-<!--            <h3>성능 검증·개선</h3>-->
+<!--            <h3>성능 검증, 개선</h3>-->
 <!--            <p>부하 테스트로 병목을 계측하고 처리 모델을 근거 있게 선택</p>-->
 <!--          </div>-->
 <!--          <div class="band__item">-->
@@ -149,10 +150,10 @@
 <!--        <p class="proj__num">03</p>-->
 <!--        <div class="proj__body">-->
 <!--          <div class="proj__head">-->
-<!--            <h3 class="proj__title">레거시 문자 플랫폼 개발·운영</h3>-->
+<!--            <h3 class="proj__title">레거시 문자 플랫폼 개발, 운영</h3>-->
 <!--            <span class="proj__date">2021.10 — 2023.09</span>-->
 <!--          </div>-->
-<!--          <p class="proj__role">유지보수 · 백오피스 개발</p>-->
+<!--          <p class="proj__role">유지보수, 백오피스 개발</p>-->
 <!--          <div class="proj__content">-->
 <!--            <div class="proj__thumb">-->
 <!--              <img src="assets/img/project-3.jpg" alt="" loading="lazy"-->
@@ -222,6 +223,29 @@
     </div>
   </section>
 
+  <section class="section" id="approach">
+    <div class="wrap grid-1-3">
+      <div class="col-label"><h2 class="section__title">개발 방식</h2></div>
+      <div class="practice">
+        <section class="practice__item" aria-labelledby="backend-practice-title">
+          <h3 id="backend-practice-title">백엔드 개발</h3>
+          <p>Java와 Spring을 주로 사용하며, 비동기 처리에 익숙합니다. IntelliJ Profiler로 성능 병목의 원인을 분석합니다.</p>
+          <p>데이터의 생명주기와 조회, 변경 패턴을 살펴 DB 스키마를 설계합니다. 필요한 정합성과 처리 성능에 맞춰 트랜잭션 범위, 격리 수준, 락 전략을 선택합니다. JUnit 테스트를 작성하고 GitHub Actions로 회귀 테스트를 자동화했습니다.</p>
+        </section>
+        <section class="practice__item" aria-labelledby="assistant-practice-title">
+          <h3 id="assistant-practice-title">Slack 업무 도우미 개발</h3>
+          <p>현재는 Slack에서 사용자의 업무 방식과 맥락을 파악해 필요한 작업을 수행하는 앱을 개발하고 있습니다. 개발, 영업 직군의 지인들에게 사용해 보도록 하고, 잘못 판단하거나 처리하지 못하는 상황을 찾아 개선하고 있습니다.</p>
+          <p>개인 서비스에서는 계층형 AGENTS.md와 Skills에 개발 규칙과 작업 절차를 정리하고, 작업 유형에 따라 필요한 규칙을 읽도록 구성했습니다. Git Hooks로 작업 명세와 테스트를 확인하며, 검증에 실패하면 원인 분석, 코드 수정, 재검증을 반복하도록 했습니다.</p>
+        </section>
+        <section class="practice__item" aria-labelledby="working-style-title">
+          <h3 id="working-style-title">함께 일하는 방식</h3>
+          <p>기술을 선택할 때 팀의 경험, 유지보수 비용, 프로젝트 상황을 함께 봅니다. 근거가 있는 피드백을 환영하고, 모르는 부분은 솔직하게 말합니다.</p>
+          <p>필요한 일은 제 담당이 아니어도 먼저 제안합니다. 차세대 플랫폼에서는 유관 부서와 레거시의 문제점과 개선사항을 정리해 요구사항에 반영했습니다.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+
   <!-- EXPERIENCE -->
   <section class="section" id="experience">
     <div class="wrap grid-1-3">
@@ -232,7 +256,8 @@
           <div>
             <p class="exp__org">서울이동통신(주) &amp; 스탠다드 네트웍스(주)</p>
             <p class="exp__role">백엔드 엔지니어</p>
-            <p class="exp__desc">문자 메시징 플랫폼의 레거시 운영부터 차세대 MSA 전환까지, 설계·개발·성능 검증·운영 전환을 담당했습니다.</p>
+            <p class="exp__role">두 회사는 동일 대표 계열사입니다.</p>
+            <p class="exp__desc">문자 메시징 플랫폼의 레거시 운영부터 차세대 MSA 전환까지, 설계, 개발, 성능 검증, 운영 전환을 담당했습니다.</p>
           </div>
         </div>
         <div class="exp__item">

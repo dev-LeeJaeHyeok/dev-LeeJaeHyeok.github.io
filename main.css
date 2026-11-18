@@ -104,3 +104,10 @@ main { font-size: var(--home-body); }
   .edu__date { grid-column: 2; }
   .exp__item { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Resume additions follow the existing main-page type scale. */
+.practice { display: grid; gap: 32px; min-width: 0; }
+.practice__item + .practice__item { border-top: 1px solid var(--line); padding-top: 28px; }
+.practice__item h3 { font-size: var(--home-item-title); line-height: 1.6; margin-bottom: 12px; }
+.practice__item p { font-size: var(--home-body); line-height: 1.8; color: var(--text-2); word-break: keep-all; overflow-wrap: anywhere; }
+.practice__item p + p { margin-top: 12px; }
